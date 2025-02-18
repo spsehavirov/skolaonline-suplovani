@@ -34,14 +34,66 @@ class SuplovaniZaci:
         return datetime.fromisoformat(date_element.text) if date_element is not None else None
 
     def _extract_teachers(self):
-        teachers = {}
-        for teacher in self.root.findall(".//Ucitel2") + self.root.findall(".//Ucitel"):
-            osoba_id = teacher.find("OSOBA_ID").text if teacher.find("OSOBA_ID") is not None else ""
-            abbreviation = teacher.find("Zkratka").text if teacher.find("Zkratka") is not None else ""
-            name = f"{teacher.find('Jmeno').text} {teacher.find('Prijmeni').text}" if teacher.find("Jmeno") is not None and teacher.find("Prijmeni") is not None else ""
-            if osoba_id:
-                teachers[osoba_id] = {"abbreviation": abbreviation, "name": name}
-        return teachers
+        return {
+            teacher.find("OSOBA_ID").text: {
+                "abbreviation": teacher.find("Zkratka").text,
+                "name": f"{teacher.find('Jmeno').text} {teacher.find('Prijmeni').text}"
+            }
+            for teacher in self.root.findall(".//Ucitel2") + self.root.findall(".//Ucitel")
+            if teacher.find("OSOBA_ID") is not None and teacher.find("Zkratka") is not None and teacher.find("Jmeno") is not None and teacher.find("Prijmeni") is not None
+        }
+
+    def _extract_subjects(self):
+        return {
+            subject.find("REALIZACE_ID").text: subject.find("Zkratka").text
+            for subject in self.root.findall(".//Predmet")
+            if subject.find("REALIZACE_ID") is not None and subject.find("Zkratka") is not None
+        }
+
+    def _extract_classrooms(self):
+        return {
+            room.find("MISTNOST_ID").text: room.find("Zkratka").text
+            for room in self.root.findall(".//Mistnost")
+            if room.find("MISTNOST_ID") is not None and room.find("Zkratka") is not None
+        }
+
+    def _extract_periods(self):
+        return {
+            period.find("OBDOBI_DNE_ID").text: period.find("Nazev").text
+            for period in self.root.findall(".//VyucovaciHodinaOd")
+            if period.find("OBDOBI_DNE_ID") is not None and period.find("Nazev") is not None
+        }
+
+    def _extract_classes(self):
+        return {
+            class_elem.find("SKUPINA_ID").text: class_elem.find("Nazev").text
+            for class_elem in self.root.findall(".//Trida")
+            if class_elem.find("SKUPINA_ID") is not None and class_elem.find("Nazev") is not None
+        }
+
+    def _extract_groups(self):
+        return {
+            group.find("SKUPINA_ID").text: {
+                "class": self.class_mapping.get(group.find("SKUPINA_ID_PARENT").text, ""),
+                "group": group.find("Nazev").text if group.find("Nazev") is not None else ""
+            }
+            for group in self.root.findall(".//TridaSkupinaSeminar")
+            if group.find("SKUPINA_ID") is not None and group.find("SKUPINA_ID_PARENT") is not None
+        }
+
+    def _extract_event_group_mappings(self):
+        return {
+            event.find("UDALOST_ID").text: event.find("SKUPINA_ID").text
+            for event in self.root.findall(".//UdalostStudijniSkupina")
+            if event.find("UDALOST_ID") is not None and event.find("SKUPINA_ID") is not None
+        }
+
+    def _extract_event_room_mappings(self):
+        return {
+            event.find("UDALOST_ID").text: self.room_mapping.get(event.find("MISTNOST_ID").text, "")
+            for event in self.root.findall(".//UdalostMistnost")
+            if event.find("UDALOST_ID") is not None and event.find("MISTNOST_ID") is not None
+        }
 
     def _extract_event_teacher_mappings(self):
         return {
@@ -66,7 +118,6 @@ class SuplovaniZaci:
             subject = self.subject_mapping.get(record.find("REALIZACE_ID").text if record.find("REALIZACE_ID") is not None else "", "")
             room = self.event_room_mapping.get(event_id, "")
 
-            # Fix: Retrieve teacher using event ID mapping if available
             osoba_id = self.event_teacher_mapping.get(event_id, "")
             teacher_info = self.teacher_mapping.get(osoba_id, {"abbreviation": "", "name": ""})
 
@@ -80,12 +131,11 @@ class SuplovaniZaci:
                 "Group": group_name,
                 "Room": room,
                 "Teacher": teacher_info["name"],
-                "Teacher Abbreviation": teacher_info["abbreviation"],
+                "Teacher_Abbreviation": teacher_info["abbreviation"],
                 "Resolution": resolution,
                 "Note": note
             })
         return substitutions
-
 
     def generate(self, output_format):
         substitutions = self.extract_substitutions()

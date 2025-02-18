@@ -40,8 +40,9 @@
             </thead>
             <tbody>
                 {% for class_name, subs in substitutions|groupby("Class") %}
-                {% set rowspan = subs|length %}
-                {% for sub in subs %}
+                {% set sorted_subs = subs|sort(attribute='Period') %}
+                {% set rowspan = sorted_subs|length %}
+                {% for sub in sorted_subs %}
                 <tr class="substitution">
                     {% if loop.first %}
                     <td rowspan="{{ rowspan }}">{{ sub.Class }}</td>
@@ -50,7 +51,7 @@
                     <td>{{ sub.Subject }}</td>
                     <td>{{ sub.Group }}</td>
                     <td>{{ sub.Room }}</td>
-                    <td>{{ sub.Teacher }}</td>
+                    <td>{{ sub.Teacher }} [{{ sub.Teacher_Abbreviation }}]</td>
                     <td>{{ sub.Resolution }}</td>
                     <td>{{ sub.Note }}</td>
                 </tr>
