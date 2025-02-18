@@ -1,0 +1,1341 @@
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Kalendar">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Datum" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="VypisSuplovani">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="CasDo" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="CasOd" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="Datum" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="OBDOBI_DNE_DO_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_DNE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID_R" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OSOBA_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="PORADI" type="xs:int" minOccurs="0" />
+                <xs:element name="Poznamka" type="xs:string" minOccurs="0" />
+                <xs:element name="REALIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="UDALOST_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ZpusobReseni" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="VyucovaciHodinaOd">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Nazev" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_DNE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Ucitel">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Jmeno" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OSOBA_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="Prijmeni" type="xs:string" minOccurs="0" />
+                <xs:element name="Zkratka" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Predmet">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="REALIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="Zkratka" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="UdalostStudijniSkupiny">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="SKUPINA_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="UDALOST_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="TridaSkupinaSeminar">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="DruhSkupiny" type="xs:string" minOccurs="0" />
+                <xs:element name="Nazev" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="SKUPINA_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="SKUPINA_ID_PARENT" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Trida">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Nazev" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="PoradiZobrazeni" type="xs:decimal" minOccurs="0" />
+                <xs:element name="SKUPINA_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="VyucovaciHodinaDo">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Nazev" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_DNE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="AbsenceZdrojeVeDni">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Datum" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="Do" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="OBDOBI_ID_R" type="xs:string" minOccurs="0" />
+                <xs:element name="Od" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="SUPL_DRUH_ABSENCE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="UDALOST_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="SuplovaniDruhAbsence">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="DruhZdroje" type="xs:string" minOccurs="0" />
+                <xs:element name="Nazev" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="SUPL_DRUH_ABSENCE_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="AbsenceUcitele">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="OBDOBI_ID_R" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OSOBA_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="UDALOST_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Ucitel2">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Jmeno" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OSOBA_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="Prijmeni" type="xs:string" minOccurs="0" />
+                <xs:element name="Zkratka" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="AbsenceMistnosti">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="MISTNOST_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="OBDOBI_ID_R" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="UDALOST_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Mistnost2">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="MISTNOST_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="Zkratka" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="KalendarovaUdalostMistnost">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="MISTNOST_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="PORADI" type="xs:int" minOccurs="0" />
+                <xs:element name="UDALOST_ID" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Mistnost">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="MISTNOST_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ORGANIZACE_ID" type="xs:string" minOccurs="0" />
+                <xs:element name="PoradiZobrazeni" type="xs:decimal" minOccurs="0" />
+                <xs:element name="Zkratka" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+    <xs:annotation>
+      <xs:appinfo>
+        <msdata:Relationship name="Kalendar_VypisSuplovani" msdata:parent="Kalendar" msdata:child="VypisSuplovani" msdata:parentkey="Datum ORGANIZACE_ID" msdata:childkey="Datum ORGANIZACE_ID" />
+        <msdata:Relationship name="VyucovaciHodinaOd_VypisSuplovani" msdata:parent="VyucovaciHodinaOd" msdata:child="VypisSuplovani" msdata:parentkey="OBDOBI_ID ORGANIZACE_ID OBDOBI_DNE_ID" msdata:childkey="OBDOBI_ID_R ORGANIZACE_ID OBDOBI_DNE_ID" />
+        <msdata:Relationship name="Ucitel_VypisSuplovani" msdata:parent="Ucitel" msdata:child="VypisSuplovani" msdata:parentkey="ORGANIZACE_ID OSOBA_ID" msdata:childkey="ORGANIZACE_ID OSOBA_ID" />
+        <msdata:Relationship name="Predmet_VypisSuplovani" msdata:parent="Predmet" msdata:child="VypisSuplovani" msdata:parentkey="ORGANIZACE_ID OBDOBI_ID REALIZACE_ID" msdata:childkey="ORGANIZACE_ID OBDOBI_ID_R REALIZACE_ID" />
+        <msdata:Relationship name="VypisSuplovani_UdalostStudijniSkupiny" msdata:parent="VypisSuplovani" msdata:child="UdalostStudijniSkupiny" msdata:parentkey="ORGANIZACE_ID UDALOST_ID" msdata:childkey="ORGANIZACE_ID UDALOST_ID" />
+        <msdata:Relationship name="TridaSkupinaSeminar_UdalostStudijniSkupiny" msdata:parent="TridaSkupinaSeminar" msdata:child="UdalostStudijniSkupiny" msdata:parentkey="SKUPINA_ID ORGANIZACE_ID OBDOBI_ID" msdata:childkey="SKUPINA_ID ORGANIZACE_ID OBDOBI_ID" />
+        <msdata:Relationship name="Trida_TridaSkupinaSeminar" msdata:parent="Trida" msdata:child="TridaSkupinaSeminar" msdata:parentkey="OBDOBI_ID ORGANIZACE_ID SKUPINA_ID" msdata:childkey="OBDOBI_ID ORGANIZACE_ID SKUPINA_ID_PARENT" />
+        <msdata:Relationship name="VyucovaciHodinaDo_VypisSuplovani" msdata:parent="VyucovaciHodinaDo" msdata:child="VypisSuplovani" msdata:parentkey="ORGANIZACE_ID OBDOBI_ID OBDOBI_DNE_ID" msdata:childkey="ORGANIZACE_ID OBDOBI_ID_R OBDOBI_DNE_DO_ID" />
+        <msdata:Relationship name="Kalendar_AbsenceZdrojeVeDni" msdata:parent="Kalendar" msdata:child="AbsenceZdrojeVeDni" msdata:parentkey="Datum ORGANIZACE_ID" msdata:childkey="Datum ORGANIZACE_ID" />
+        <msdata:Relationship name="SuplovaniDruhAbsence_AbsenceZdrojeVeDni" msdata:parent="SuplovaniDruhAbsence" msdata:child="AbsenceZdrojeVeDni" msdata:parentkey="SUPL_DRUH_ABSENCE_ID OBDOBI_ID ORGANIZACE_ID" msdata:childkey="SUPL_DRUH_ABSENCE_ID OBDOBI_ID_R ORGANIZACE_ID" />
+        <msdata:Relationship name="AbsenceZdrojeVeDni_AbsenceUcitele" msdata:parent="AbsenceZdrojeVeDni" msdata:child="AbsenceUcitele" msdata:parentkey="ORGANIZACE_ID UDALOST_ID" msdata:childkey="ORGANIZACE_ID UDALOST_ID" />
+        <msdata:Relationship name="Ucitel2_AbsenceUcitele" msdata:parent="Ucitel2" msdata:child="AbsenceUcitele" msdata:parentkey="ORGANIZACE_ID OSOBA_ID" msdata:childkey="ORGANIZACE_ID OSOBA_ID" />
+        <msdata:Relationship name="AbsenceZdrojeVeDni_AbsenceMistnosti" msdata:parent="AbsenceZdrojeVeDni" msdata:child="AbsenceMistnosti" msdata:parentkey="ORGANIZACE_ID UDALOST_ID" msdata:childkey="ORGANIZACE_ID UDALOST_ID" />
+        <msdata:Relationship name="Mistnost2_AbsenceMistnosti" msdata:parent="Mistnost2" msdata:child="AbsenceMistnosti" msdata:parentkey="MISTNOST_ID ORGANIZACE_ID" msdata:childkey="MISTNOST_ID ORGANIZACE_ID" />
+        <msdata:Relationship name="VypisSuplovani_KalendarovaUdalostMistnost" msdata:parent="VypisSuplovani" msdata:child="KalendarovaUdalostMistnost" msdata:parentkey="ORGANIZACE_ID PORADI UDALOST_ID" msdata:childkey="ORGANIZACE_ID PORADI UDALOST_ID" />
+        <msdata:Relationship name="Mistnost_KalendarovaUdalostMistnost" msdata:parent="Mistnost" msdata:child="KalendarovaUdalostMistnost" msdata:parentkey="MISTNOST_ID ORGANIZACE_ID" msdata:childkey="MISTNOST_ID ORGANIZACE_ID" />
+      </xs:appinfo>
+    </xs:annotation>
+  </xs:schema>
+  <Kalendar>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </Kalendar>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T10:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T09:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>3</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>3</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <PORADI>12</PORADI>
+    <REALIZACE_ID>3</REALIZACE_ID>
+    <UDALOST_ID>C44733799</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T14:00:00+01:00</CasDo>
+    <CasOd>2025-02-07T12:25:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>6</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>6</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>43</REALIZACE_ID>
+    <UDALOST_ID>C44733863</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T09:30:00+01:00</CasDo>
+    <CasOd>2025-02-07T07:55:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>1</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>1</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>43</REALIZACE_ID>
+    <UDALOST_ID>C44733941</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T13:10:00+01:00</CasDo>
+    <CasOd>2025-02-07T12:25:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>6</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>6</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>12</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>44</REALIZACE_ID>
+    <UDALOST_ID>C44733950</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T11:15:00+01:00</CasDo>
+    <CasOd>2025-02-07T10:30:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>4</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>12</OSOBA_ID>
+    <PORADI>11</PORADI>
+    <REALIZACE_ID>12</REALIZACE_ID>
+    <UDALOST_ID>C44733965</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T09:30:00+01:00</CasDo>
+    <CasOd>2025-02-07T07:55:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>1</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>1</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3427872</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>42</REALIZACE_ID>
+    <UDALOST_ID>C44733983</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T08:40:00+01:00</CasDo>
+    <CasOd>2025-02-07T07:55:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>1</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>1</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>12</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>44</REALIZACE_ID>
+    <UDALOST_ID>C44734039</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T12:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T11:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>5</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>43</REALIZACE_ID>
+    <UDALOST_ID>C44734145</UDALOST_ID>
+    <ZpusobReseni>odpadá</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T12:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T11:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>5</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3220852</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>12</REALIZACE_ID>
+    <UDALOST_ID>C44801241</UDALOST_ID>
+    <ZpusobReseni>suplování - Spoj (za Kad)</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T11:15:00+01:00</CasDo>
+    <CasOd>2025-02-07T10:30:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>4</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3458703</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>6</REALIZACE_ID>
+    <UDALOST_ID>C44801242</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  7 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T11:15:00+01:00</CasDo>
+    <CasOd>2025-02-07T10:30:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>4</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3458647</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>50</REALIZACE_ID>
+    <UDALOST_ID>C44801250</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  5 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T12:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T11:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>5</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>22</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>29</REALIZACE_ID>
+    <UDALOST_ID>C44801251</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  4 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T12:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T11:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>5</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3458647</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>25</REALIZACE_ID>
+    <UDALOST_ID>C44801254</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  7 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T10:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T09:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>3</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>3</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>5</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>7</REALIZACE_ID>
+    <UDALOST_ID>C44801275</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  4 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T11:15:00+01:00</CasDo>
+    <CasOd>2025-02-07T10:30:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>4</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>71</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>45</REALIZACE_ID>
+    <UDALOST_ID>C44801277</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  3 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T11:15:00+01:00</CasDo>
+    <CasOd>2025-02-07T10:30:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>4</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3220852</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>12</REALIZACE_ID>
+    <UDALOST_ID>C44801278</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  3 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T10:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T09:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>3</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>3</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3220852</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>7</REALIZACE_ID>
+    <UDALOST_ID>C44801282</UDALOST_ID>
+    <ZpusobReseni>přesun z 7. 2.,  6 hod.</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T11:15:00+01:00</CasDo>
+    <CasOd>2025-02-07T10:30:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>4</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>3</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>27</REALIZACE_ID>
+    <UDALOST_ID>C44821742</UDALOST_ID>
+    <ZpusobReseni>suplování - Spoj (za Baj, Rusz)</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T12:20:00+01:00</CasDo>
+    <CasOd>2025-02-07T11:35:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>5</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>3</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <REALIZACE_ID>27</REALIZACE_ID>
+    <UDALOST_ID>C44821743</UDALOST_ID>
+    <ZpusobReseni>suplování - Spoj (za Baj, Rusz)</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T13:10:00+01:00</CasDo>
+    <CasOd>2025-02-07T12:25:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>6</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>6</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>3</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <Poznamka>odpadá sk. RUSZ</Poznamka>
+    <REALIZACE_ID>27</REALIZACE_ID>
+    <UDALOST_ID>C44821744</UDALOST_ID>
+    <ZpusobReseni>suplování - Spoj (za Baj, Rusz)</ZpusobReseni>
+  </VypisSuplovani>
+  <VypisSuplovani>
+    <CasDo>2025-02-07T14:00:00+01:00</CasDo>
+    <CasOd>2025-02-07T13:15:00+01:00</CasOd>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <OBDOBI_DNE_DO_ID>7</OBDOBI_DNE_DO_ID>
+    <OBDOBI_DNE_ID>7</OBDOBI_DNE_ID>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>3</OSOBA_ID>
+    <PORADI>1</PORADI>
+    <Poznamka>odpadá sk. RUSZ</Poznamka>
+    <REALIZACE_ID>27</REALIZACE_ID>
+    <UDALOST_ID>C44821745</UDALOST_ID>
+    <ZpusobReseni>suplování - Spoj (za Baj, Rusz)</ZpusobReseni>
+  </VypisSuplovani>
+  <VyucovaciHodinaOd>
+    <Nazev>3</Nazev>
+    <OBDOBI_DNE_ID>3</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaOd>
+  <VyucovaciHodinaOd>
+    <Nazev>6</Nazev>
+    <OBDOBI_DNE_ID>6</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaOd>
+  <VyucovaciHodinaOd>
+    <Nazev>1</Nazev>
+    <OBDOBI_DNE_ID>1</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaOd>
+  <VyucovaciHodinaOd>
+    <Nazev>4</Nazev>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaOd>
+  <VyucovaciHodinaOd>
+    <Nazev>5</Nazev>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaOd>
+  <VyucovaciHodinaOd>
+    <Nazev>7</Nazev>
+    <OBDOBI_DNE_ID>7</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaOd>
+  <Ucitel>
+    <Jmeno>Lenka</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <Prijmeni>Petrová</Prijmeni>
+    <Zkratka>Pet</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Lucie</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>12</OSOBA_ID>
+    <Prijmeni>Kadlecová</Prijmeni>
+    <Zkratka>Kad</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Michal</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3427872</OSOBA_ID>
+    <Prijmeni>Rusz</Prijmeni>
+    <Zkratka>Rusz</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Michal</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3220852</OSOBA_ID>
+    <Prijmeni>Starostka</Prijmeni>
+    <Zkratka>Sta</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>David</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3458703</OSOBA_ID>
+    <Prijmeni>Krajíček</Prijmeni>
+    <Zkratka>Kra</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Jakub</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3458647</OSOBA_ID>
+    <Prijmeni>Vašenda</Prijmeni>
+    <Zkratka>Vaš</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Zuzana</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>22</OSOBA_ID>
+    <Prijmeni>Paučková</Prijmeni>
+    <Zkratka>Pau</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Ivana</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>5</OSOBA_ID>
+    <Prijmeni>Burešová</Prijmeni>
+    <Zkratka>Bure</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Eliška</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>71</OSOBA_ID>
+    <Prijmeni>Wiglasz</Prijmeni>
+    <Zkratka>Wig</Zkratka>
+  </Ucitel>
+  <Ucitel>
+    <Jmeno>Milada</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>3</OSOBA_ID>
+    <Prijmeni>Bajtková</Prijmeni>
+    <Zkratka>Baj</Zkratka>
+  </Ucitel>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>3</REALIZACE_ID>
+    <Zkratka>DEJ</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>43</REALIZACE_ID>
+    <Zkratka>CEJ</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>44</REALIZACE_ID>
+    <Zkratka>BIE</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>12</REALIZACE_ID>
+    <Zkratka>TEV</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>42</REALIZACE_ID>
+    <Zkratka>TEP</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>6</REALIZACE_ID>
+    <Zkratka>OBN</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>50</REALIZACE_ID>
+    <Zkratka>ZAM</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>29</REALIZACE_ID>
+    <Zkratka>CIT</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>25</REALIZACE_ID>
+    <Zkratka>ELM</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>7</REALIZACE_ID>
+    <Zkratka>MAT</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>45</REALIZACE_ID>
+    <Zkratka>CJA</Zkratka>
+  </Predmet>
+  <Predmet>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <REALIZACE_ID>27</REALIZACE_ID>
+    <Zkratka>TEM</Zkratka>
+  </Predmet>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>394</SKUPINA_ID>
+    <UDALOST_ID>C44733799</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>387</SKUPINA_ID>
+    <UDALOST_ID>C44733863</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>386</SKUPINA_ID>
+    <UDALOST_ID>C44733941</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>393</SKUPINA_ID>
+    <UDALOST_ID>C44733950</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>385</SKUPINA_ID>
+    <UDALOST_ID>C44733965</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282225</SKUPINA_ID>
+    <UDALOST_ID>C44733983</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>395</SKUPINA_ID>
+    <UDALOST_ID>C44734039</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>389</SKUPINA_ID>
+    <UDALOST_ID>C44734145</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282216</SKUPINA_ID>
+    <UDALOST_ID>C44801241</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>385</SKUPINA_ID>
+    <UDALOST_ID>C44801242</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>390</SKUPINA_ID>
+    <UDALOST_ID>C44801250</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>390</SKUPINA_ID>
+    <UDALOST_ID>C44801251</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>389</SKUPINA_ID>
+    <UDALOST_ID>C44801254</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>384</SKUPINA_ID>
+    <UDALOST_ID>C44801275</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282190</SKUPINA_ID>
+    <UDALOST_ID>C44801277</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282436</SKUPINA_ID>
+    <UDALOST_ID>C44801278</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>394</SKUPINA_ID>
+    <UDALOST_ID>C44801282</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>388</SKUPINA_ID>
+    <UDALOST_ID>C44821742</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>388</SKUPINA_ID>
+    <UDALOST_ID>C44821743</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282220</SKUPINA_ID>
+    <UDALOST_ID>C44821744</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <UdalostStudijniSkupiny>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282220</SKUPINA_ID>
+    <UDALOST_ID>C44821745</UDALOST_ID>
+  </UdalostStudijniSkupiny>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>1B</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>394</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>394</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>3A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>387</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>387</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>4B</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>386</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>386</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>1A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>393</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>393</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>4C</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>385</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>385</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Skupina třídy</DruhSkupiny>
+    <Nazev>OP 2.sk</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282225</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>389</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>1C</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>395</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>395</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>3C</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>389</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>389</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Skupina třídy</DruhSkupiny>
+    <Nazev>1.sk</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282216</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>387</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>2A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>390</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>390</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>4A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>384</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>384</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Skupina třídy</DruhSkupiny>
+    <Nazev>1.sk</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282190</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>384</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Skupina třídy</DruhSkupiny>
+    <Nazev>2.sk</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282436</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>384</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Třída</DruhSkupiny>
+    <Nazev>3B</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>388</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>388</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <TridaSkupinaSeminar>
+    <DruhSkupiny>Skupina třídy</DruhSkupiny>
+    <Nazev>OP 1. sk</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>C1282220</SKUPINA_ID>
+    <SKUPINA_ID_PARENT>388</SKUPINA_ID_PARENT>
+  </TridaSkupinaSeminar>
+  <Trida>
+    <Nazev>1B</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>394</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>3A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>387</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>4B</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>386</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>1A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>393</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>4C</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>385</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>3C</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>389</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>1C</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>395</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>2A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>390</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>4A</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>384</SKUPINA_ID>
+  </Trida>
+  <Trida>
+    <Nazev>3B</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SKUPINA_ID>388</SKUPINA_ID>
+  </Trida>
+  <VyucovaciHodinaDo>
+    <Nazev>3</Nazev>
+    <OBDOBI_DNE_ID>3</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaDo>
+  <VyucovaciHodinaDo>
+    <Nazev>6</Nazev>
+    <OBDOBI_DNE_ID>6</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaDo>
+  <VyucovaciHodinaDo>
+    <Nazev>1</Nazev>
+    <OBDOBI_DNE_ID>1</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaDo>
+  <VyucovaciHodinaDo>
+    <Nazev>4</Nazev>
+    <OBDOBI_DNE_ID>4</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaDo>
+  <VyucovaciHodinaDo>
+    <Nazev>5</Nazev>
+    <OBDOBI_DNE_ID>5</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaDo>
+  <VyucovaciHodinaDo>
+    <Nazev>7</Nazev>
+    <OBDOBI_DNE_ID>7</OBDOBI_DNE_ID>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+  </VyucovaciHodinaDo>
+  <AbsenceZdrojeVeDni>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <Do>2025-02-05T14:00:00+01:00</Do>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <Od>2025-02-07T00:00:00+01:00</Od>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SUPL_DRUH_ABSENCE_ID>E29992</SUPL_DRUH_ABSENCE_ID>
+    <UDALOST_ID>C44787613</UDALOST_ID>
+  </AbsenceZdrojeVeDni>
+  <AbsenceZdrojeVeDni>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <Do>2025-02-07T14:00:00+01:00</Do>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <Od>2025-02-07T07:55:00+01:00</Od>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SUPL_DRUH_ABSENCE_ID>E29996</SUPL_DRUH_ABSENCE_ID>
+    <UDALOST_ID>C44801237</UDALOST_ID>
+  </AbsenceZdrojeVeDni>
+  <AbsenceZdrojeVeDni>
+    <Datum>2025-02-07T00:00:00+01:00</Datum>
+    <Do>2025-02-07T14:00:00+01:00</Do>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <Od>2025-02-07T07:55:00+01:00</Od>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SUPL_DRUH_ABSENCE_ID>E29995</SUPL_DRUH_ABSENCE_ID>
+    <UDALOST_ID>C44801238</UDALOST_ID>
+  </AbsenceZdrojeVeDni>
+  <SuplovaniDruhAbsence>
+    <DruhZdroje>Učitel</DruhZdroje>
+    <Nazev>ošetřování člena rodiny</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SUPL_DRUH_ABSENCE_ID>E29992</SUPL_DRUH_ABSENCE_ID>
+  </SuplovaniDruhAbsence>
+  <SuplovaniDruhAbsence>
+    <DruhZdroje>Učitel</DruhZdroje>
+    <Nazev>služební cesta</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SUPL_DRUH_ABSENCE_ID>E29996</SUPL_DRUH_ABSENCE_ID>
+  </SuplovaniDruhAbsence>
+  <SuplovaniDruhAbsence>
+    <DruhZdroje>Učitel</DruhZdroje>
+    <Nazev>samostudium</Nazev>
+    <OBDOBI_ID>C27856</OBDOBI_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <SUPL_DRUH_ABSENCE_ID>E29995</SUPL_DRUH_ABSENCE_ID>
+  </SuplovaniDruhAbsence>
+  <AbsenceUcitele>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <UDALOST_ID>C44787613</UDALOST_ID>
+  </AbsenceUcitele>
+  <AbsenceUcitele>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>12</OSOBA_ID>
+    <UDALOST_ID>C44801237</UDALOST_ID>
+  </AbsenceUcitele>
+  <AbsenceUcitele>
+    <OBDOBI_ID_R>C27856</OBDOBI_ID_R>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3427872</OSOBA_ID>
+    <UDALOST_ID>C44801238</UDALOST_ID>
+  </AbsenceUcitele>
+  <Ucitel2>
+    <Jmeno>Lenka</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3281529</OSOBA_ID>
+    <Prijmeni>Petrová</Prijmeni>
+    <Zkratka>Pet</Zkratka>
+  </Ucitel2>
+  <Ucitel2>
+    <Jmeno>Lucie</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>12</OSOBA_ID>
+    <Prijmeni>Kadlecová</Prijmeni>
+    <Zkratka>Kad</Zkratka>
+  </Ucitel2>
+  <Ucitel2>
+    <Jmeno>Michal</Jmeno>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <OSOBA_ID>C3427872</OSOBA_ID>
+    <Prijmeni>Rusz</Prijmeni>
+    <Zkratka>Rusz</Zkratka>
+  </Ucitel2>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>22</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>12</PORADI>
+    <UDALOST_ID>C44733799</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>27</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44733863</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>31</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44733941</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>21</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44733950</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>7</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>11</PORADI>
+    <UDALOST_ID>C44733965</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>19</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>11</PORADI>
+    <UDALOST_ID>C44733965</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>15</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44733983</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>23</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44734039</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>29</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44734145</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>19</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801241</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>32</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801242</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>24</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801250</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>24</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801251</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>29</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801254</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>30</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801275</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>6</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801277</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>19</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801278</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>22</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44801282</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>3</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44821742</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>4</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44821742</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>3</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44821743</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>4</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44821743</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>3</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44821744</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <KalendarovaUdalostMistnost>
+    <MISTNOST_ID>3</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <PORADI>1</PORADI>
+    <UDALOST_ID>C44821745</UDALOST_ID>
+  </KalendarovaUdalostMistnost>
+  <Mistnost>
+    <MISTNOST_ID>22</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.1. B</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>27</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.3. A</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>31</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.4. B</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>21</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.1. A</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>7</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>TEL1</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>19</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>TEL2</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>15</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>PRA2</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>23</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.1. C</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>29</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.3. C</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>32</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.4. C</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>24</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.2. A</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>30</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>U.4. A</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>6</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>JAZ3</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>3</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>ELM</Zkratka>
+  </Mistnost>
+  <Mistnost>
+    <MISTNOST_ID>4</MISTNOST_ID>
+    <ORGANIZACE_ID>C1636</ORGANIZACE_ID>
+    <Zkratka>PNEU</Zkratka>
+  </Mistnost>
+</NewDataSet>

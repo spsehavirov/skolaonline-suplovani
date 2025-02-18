@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Suplování pro studenty - {{ date }}</title>
+    <style>
+        @page { size: A4 landscape; margin: .2rem; }
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        .container { width: 90%; margin: auto; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .substitution { background-color: #ffffcc; }
+
+        /* Alternate row colors */
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:nth-child(odd) { background-color: #ffffff; }
+
+        /* Header row styling */
+        thead th { background-color: #0984e3; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Výpis suplování – {{ date }}</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Třída</th>
+                    <th>Hodina</th>
+                    <th>Předmět</th>
+                    <th>Skupina</th>
+                    <th>Místnost</th>
+                    <th>Učitel</th>
+                    <th>Způsob suplování</th>
+                    <th>Poznámka</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class_name, subs in substitutions|groupby("Class") %}
+                {% set rowspan = subs|length %}
+                {% for sub in subs %}
+                <tr class="substitution">
+                    {% if loop.first %}
+                    <td rowspan="{{ rowspan }}">{{ sub.Class }}</td>
+                    {% endif %}
+                    <td>{{ sub.Period }}</td>
+                    <td>{{ sub.Subject }}</td>
+                    <td>{{ sub.Group }}</td>
+                    <td>{{ sub.Room }}</td>
+                    <td>{{ sub.Teacher }}</td>
+                    <td>{{ sub.Resolution }}</td>
+                    <td>{{ sub.Note }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

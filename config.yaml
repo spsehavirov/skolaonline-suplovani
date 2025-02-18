@@ -1,0 +1,5 @@
+settings:
+  watch_folder: "./watch" #"/path/to/watch/folder"
+  output_folder: "./outputs"
+  valid_xml_tag: "NewDataSet"
+  check_interval: 2  # Time in seconds between folder checks

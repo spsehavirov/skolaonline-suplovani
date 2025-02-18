@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Výpis suplování pro učitelé - {{ date }}</title>
+    <style>
+        @page { size: A4 landscape; margin: 1cm; }
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        .container { width: 90%; margin: auto; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .absent { color: red; font-weight: bold; }
+        .suplovani { background-color: #ffffcc; }
+
+        /* Proper row highlighting */
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:nth-child(odd) { background-color: #ffffff; }
+
+        /* Header row styling */
+        thead th { background-color: #0984e3; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Výpis suplování – {{ date }}</h2>
+
+        <!-- Absentující učitelé -->
+        <!--h3>Absentující učitelé</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Učitel</th>
+                    <th>Důvod absence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for absence in absences %}
+                <tr class="absent">
+                    <td>{{ absence.Teacher }}</td>
+                    <td>{{ absence.Reason }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table-->
+
+        <!-- Změny v rozvrhu učitelů -->
+        <h3>Změny v rozvrhu učitelů</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Učitel</th>
+                    <th>Zkratka</th>
+                    <th>Předmět</th>
+                    <th>Hodina</th>
+                    <th>Místnost</th>
+                    <th>Třída</th>
+                    <th>Způsob suplování</th>
+                    <th>Poznámka</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher, subs in substitutions|groupby("Teacher") %}
+                {% set rowspan = subs|length %}
+                {% for sub in subs %}
+                <tr class="suplovani">
+                    {% if loop.first %}
+                    <td rowspan="{{ rowspan }}">{{ sub.Teacher }}</td>
+                    <td rowspan="{{ rowspan }}">{{ sub.Teacher_Abbreviation }}</td>
+                    {% endif %}
+                    <td>{{ sub.Subject }}</td>
+                    <td>{{ sub.Period }}</td>
+                    <td>{{ sub.Room }}</td>
+                    <td>{{ sub.Class }}</td>
+                    <td>{{ sub.Resolution }}</td>
+                    <td>{{ sub.Note }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
