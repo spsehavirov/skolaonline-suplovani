@@ -10,6 +10,7 @@ outputs/
 watch/
 fonts/
 garbage/
+downloaded_files/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
