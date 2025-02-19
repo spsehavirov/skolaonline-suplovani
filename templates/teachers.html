@@ -6,6 +6,12 @@
     <title>Výpis suplování pro učitelé - {{ date }}</title>
     <style>
         @page { size: A4 landscape; margin: 1cm; }
+        @media print {
+            tr:has(td[colspan]) {
+                /*page-break-before: always;*/
+                page-break-inside: avoid;
+            }
+        }
         body { font-family: Arial, sans-serif; font-size: 12px; }
         .container { width: 90%; margin: auto; }
         h2 { text-align: center; }

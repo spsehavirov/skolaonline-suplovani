@@ -5,6 +5,12 @@
     <title>Suplování pro studenty - {{ date }}</title>
     <style>
         @page { size: A4 landscape; margin: .2rem; }
+        @media print {
+            tr:has(td[colspan]) {
+                /*page-break-before: always;*/
+                page-break-inside: avoid;
+            }
+        }
         body { font-family: Arial, sans-serif; font-size: 12px; }
         .container { width: 90%; margin: auto; }
         h2 { text-align: center; }
@@ -18,12 +24,12 @@
         tr:nth-child(odd) { background-color: #ffffff; }
 
         /* Header row styling */
-        thead th { background-color: #0984e3; color: white; }
+        thead th { background-color: {{ headerColor }}; color: white; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Výpis suplování – {{ date }}</h2>
+        <h2>Výpis suplování – {{ date }} ({{ day }})</h2>
 
         <table>
             <thead>

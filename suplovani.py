@@ -52,6 +52,7 @@ def process_suplovani(xml_file):
     print(supl.generate("csv"))
     print(supl.generate("html"))
     print(supl.generate("pdf"))
+    print(supl.generate("png"))
 
     # Move processed file
     shutil.move(xml_file, os.path.join(PROCESSED_FOLDER, os.path.basename(xml_file)))

@@ -74,6 +74,8 @@ class RecorderTest(BaseCase):
             the default folder.
         """
 
+        self.sleep(5)
+
         download_dir = self.get_downloads_folder()
         print("Download directory: " + download_dir)
 
