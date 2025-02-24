@@ -17,6 +17,8 @@ Dependencies:
 - `datetime`
 - `xml.etree.ElementTree` (ET)
 """
+# pylint: disable=R0902
+# pylint: disable=R0914
 
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -34,6 +36,7 @@ class SuplovaniBase:
     """
 
     def __init__(self, xml_file, template_folder="templates"):
+        # pylint: disable=R0902
         self.xml_file = xml_file
         self.tree = ET.parse(xml_file)
         self.root = self.tree.getroot()
@@ -45,6 +48,7 @@ class SuplovaniBase:
         self.subject_mapping = self._extract_subjects()
         self.room_mapping = self._extract_classrooms()
         self.period_mapping = self._extract_periods()
+
 
     def export_path(self, path):
         """Set the internal path prefix for the file exports."""

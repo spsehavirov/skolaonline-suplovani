@@ -41,6 +41,8 @@ Example config.yaml:
       check_interval: 10
 """
 
+# pylint: disable=R0801
+
 import os
 import time
 import shutil
@@ -70,7 +72,7 @@ def detect_suplovani_type(xml_file):
 
     if root.find(".//VypisSuplovaniZaka") is not None:
         return "students"
-    elif root.find(".//VypisSuplovani") is not None:
+    if root.find(".//VypisSuplovani") is not None:
         return "teachers"
     return None
 

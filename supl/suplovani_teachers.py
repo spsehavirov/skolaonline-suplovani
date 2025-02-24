@@ -26,12 +26,15 @@ Usage Example:
     suplovani.export_path("/output")
     suplovani.generate("html")
 """
+# pylint: disable=R0914
+# pylint: disable=R0902
 
 import pandas as pd
 from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
 from .suplovani_base import SuplovaniBase
+
 
 class SuplovaniUcitele(SuplovaniBase):
     """
@@ -295,7 +298,7 @@ class SuplovaniUcitele(SuplovaniBase):
         absences = self.extract_absences()
         substitutions = self.extract_substitutions()
 
-        timestamp = self.date.strftime('%Y_%m_%d')
+        timestamp = self.date.strftime("%Y_%m_%d")
 
         if output_format == "csv":
             pd.DataFrame(substitutions).to_csv(
@@ -328,9 +331,9 @@ class SuplovaniUcitele(SuplovaniBase):
             return "HTML file generated."
 
         if output_format == "pdf":
-            HTML(
-                filename=f"{self._path}/suplovani_{timestamp}.html"
-            ).write_pdf(f"{self._path}/suplovani_{timestamp}.pdf")
+            HTML(filename=f"{self._path}/suplovani_{timestamp}.html").write_pdf(
+                f"{self._path}/suplovani_{timestamp}.pdf"
+            )
             return "PDF file generated."
 
         return "Unsupported format!"

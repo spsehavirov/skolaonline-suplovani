@@ -33,6 +33,8 @@ Usage Example:
     suplovani.export_path("/output")
     suplovani.generate("html")
 """
+# pylint: disable=R0914
+# pylint: disable=R0902
 
 import pymupdf
 import pandas as pd
@@ -40,6 +42,7 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
 from .suplovani_base import SuplovaniBase
+
 
 class SuplovaniZaci(SuplovaniBase):
     """
@@ -299,9 +302,10 @@ class SuplovaniZaci(SuplovaniBase):
                     final_list.extend(recs)
 
         return final_list
-    
+
     def timestamp(self):
-        return self.date.strftime('%Y_%m_%d')
+        """ Get the timestamp for the filenames """
+        return self.date.strftime("%Y_%m_%d")
 
     def generate(self, output_format):
         """
@@ -365,22 +369,14 @@ class SuplovaniZaci(SuplovaniBase):
             return "HTML file generated."
 
         if output_format == "pdf":
-            import_from = (
-                f"{self._path}/suplovani_students_{self.timestamp()}.html"
-            )
-            export_to = (
-                f"{self._path}/suplovani_students_{self.timestamp()}.pdf"
-            )
+            import_from = f"{self._path}/suplovani_students_{self.timestamp()}.html"
+            export_to = f"{self._path}/suplovani_students_{self.timestamp()}.pdf"
             HTML(filename=import_from).write_pdf(export_to)
             return "PDF file generated."
 
         if output_format == "png":
-            pdf = (
-                f"{self._path}/suplovani_students_{self.timestamp()}.pdf"
-            )
-            export_prefix = (
-                f"{self._path}/suplovani_students_{self.timestamp()}"
-            )
+            pdf = f"{self._path}/suplovani_students_{self.timestamp()}.pdf"
+            export_prefix = f"{self._path}/suplovani_students_{self.timestamp()}"
 
             doc = pymupdf.open(pdf)
             desired_dpi = 600
