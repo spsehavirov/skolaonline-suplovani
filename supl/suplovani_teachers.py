@@ -28,6 +28,7 @@ Usage Example:
 """
 # pylint: disable=R0914
 # pylint: disable=R0902
+# pylint: disable=R0801
 
 import pandas as pd
 from weasyprint import HTML

@@ -33,8 +33,10 @@ Usage Example:
     suplovani.export_path("/output")
     suplovani.generate("html")
 """
+
 # pylint: disable=R0914
 # pylint: disable=R0902
+# pylint: disable=R0801
 
 import pymupdf
 import pandas as pd
@@ -237,74 +239,65 @@ class SuplovaniZaci(SuplovaniBase):
 
     def extract_final_substitutions2(self, records):
         """
-        Processes the list of substitution records (each a dict with keys
-        "Class", "Period", "Group", "Resolution", "Note", "Subject", etc.)
-        by grouping them based on (Class, Period). When a general cancellation
-        (Group is empty and Resolution == "odpadá") exists for that slot, then
-        for each record that is for a specific group (non-empty Group)
-        and is a substitution (Resolution != "odpadá"), if its
-        Note is empty, add a note "za [Subject]"
-        where [Subject] is taken from the general cancellation.
-
-        Finally, if any substitution record exists in that slot,
-        the general cancellation is omitted.
+        Processes the list of substitution records by grouping them based on (Class, Period).
+        If a general cancellation exists (Group is empty and Resolution == "odpadá"),
+        it updates substitution records with a missing Note by adding "za [Subject]".
+        If any substitution exists, the general cancellation is omitted.
         """
-        # Group records by (Class, Period)
-        groups = {}
-        for rec in records:
-            key = (rec.get("Class", ""), rec.get("Period", ""))
-            groups.setdefault(key, []).append(rec)
 
-        final_list = []
-        for key, recs in groups.items():
-            # Identify a general cancellation record: Group == "" and Resolution == "odpadá"
+        def group_records(records):
+            grouped = {}
+            for rec in records:
+                key = (rec.get("Class", ""), rec.get("Period", ""))
+                grouped.setdefault(key, []).append(rec)
+            return grouped
+
+        def classify_records(recs):
+            """Separate general cancellation from subgroup records."""
             general_cancel = None
-            # Build a list for records that have a non-empty Group OR are not cancellations
-
-            # records for a specific subgroup (Group not empty) OR a substitution for entire class
             subgroup_records = []
             for r in recs:
-                group = r.get("Group", "").strip()
-                resolution = r.get("Resolution", "").strip()
-                if group == "":
-                    if resolution == "odpadá":
-                        general_cancel = r  # record for the whole class cancellation
-                    else:
-                        # a record for the entire class that is a substitution,
-                        # so treat it like a subgroup record.
-                        subgroup_records.append(r)
+                group, resolution = (
+                    r.get("Group", "").strip(),
+                    r.get("Resolution", "").strip(),
+                )
+                if group == "" and resolution == "odpadá":
+                    general_cancel = r
                 else:
-                    # record for a specific subgroup
                     subgroup_records.append(r)
+            return general_cancel, subgroup_records
 
-            # Now, if we have any subgroup records that are substitutions, we want to update them:
-            subs = [
+        def update_notes(subs, general_cancel):
+            """Update substitution records with missing notes based on general cancellation."""
+            if general_cancel:
+                cancellation_subject = general_cancel.get("Subject", "").strip()
+                for r in subs:
+                    if not r.get("Note", "").strip() and cancellation_subject:
+                        r["Note"] = f"za {cancellation_subject}"
+
+        final_list = []
+        grouped_records = group_records(records)
+
+        for _, recs in grouped_records.items():
+            general_cancel, subgroup_records = classify_records(recs)
+            substitutions = [
                 r
                 for r in subgroup_records
                 if r.get("Resolution", "").strip() != "odpadá"
             ]
-            if subs:
-                # If there is a general cancellation, use its Subject as the note if needed.
-                if general_cancel is not None:
-                    cancellation_subject = general_cancel.get("Subject", "").strip()
-                    for r in subs:
-                        if not r.get("Note", "").strip() and cancellation_subject:
-                            r["Note"] = f"za {cancellation_subject}"
-                # Then add all substitution records.
-                final_list.extend(subs)
+
+            if substitutions:
+                update_notes(substitutions, general_cancel)
+                final_list.extend(substitutions)
+            elif general_cancel:
+                final_list.append(general_cancel)
             else:
-                # No substitution records exist for this slot.
-                # In that case, if a general cancellation exists, output it.
-                if general_cancel is not None:
-                    final_list.append(general_cancel)
-                else:
-                    # Otherwise, output whatever records exist (this is a fallback)
-                    final_list.extend(recs)
+                final_list.extend(recs)
 
         return final_list
 
     def timestamp(self):
-        """ Get the timestamp for the filenames """
+        """Get the timestamp for the filenames"""
         return self.date.strftime("%Y_%m_%d")
 
     def generate(self, output_format):
