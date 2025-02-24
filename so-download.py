@@ -183,9 +183,10 @@ class RecorderTest(BaseCase):
             datestamp = (
                 datetime.strptime(self.custom_date, '%d.%m.%Y').strftime('%Y-%m-%d')
             )
+            watch_folder = config["settings"]["watch_folder"]
             destination = os.path.join(
                 os.getcwd(),
-                f"{config["settings"]["watch_folder"]}/so_suplovani_students-{datestamp}.xml",
+                f"{watch_folder}/so_suplovani_students-{datestamp}.xml",
             )
             shutil.move(xml_file, destination)
             print("XML file copied to: " + destination)

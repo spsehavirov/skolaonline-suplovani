@@ -26,15 +26,14 @@ Usage Example:
     suplovani.export_path("/output")
     suplovani.generate("html")
 """
-from datetime import datetime
-import xml.etree.ElementTree as ET
 
 import pandas as pd
 from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
+from .suplovani_base import SuplovaniBase
 
-class SuplovaniUcitele:
+class SuplovaniUcitele(SuplovaniBase):
     """
     A class to process XML data from SkolaOnline.cz related to teacher absences
     and substitutions.
@@ -52,44 +51,17 @@ class SuplovaniUcitele:
         date (datetime): Date extracted from the XML.
         _path (str): Output directory path for file exports.
     """
+
     def __init__(self, xml_file, template_folder="templates"):
-        self.xml_file = xml_file
-        self.tree = ET.parse(xml_file)
-        self.root = self.tree.getroot()
-        self.date = self._extract_date()
-        self.template_folder = template_folder
-        self._path = "."
+        super().__init__(xml_file, template_folder)
 
         # Extract mappings
+        self.class_mapping = self._extract_class_mappings()
         self.teacher_mapping = self._extract_teachers()
-        self.subject_mapping = self._extract_subjects()
         self.room_mapping = self._extract_classrooms()
         self.event_room_mapping = self._extract_event_room_mappings()
-        self.class_mapping = self._extract_class_mappings()
         self.udalost_mapping = self._extract_event_group_mappings()
-        self.period_mapping = self._extract_periods()
         self.absence_reason_mapping = self._extract_absence_reasons()
-
-    def export_path(self, path):
-        """
-        Sets the internal path prefix for file exports.
-
-        Args:
-            path (str): The directory path where output files will be saved.
-
-        Example:
-            suplovani.export_path("/output")
-        """
-
-        self._path = path
-
-    def _extract_date(self):
-        date_element = self.root.find(".//Kalendar/Datum")
-        return (
-            datetime.fromisoformat(date_element.text)
-            if date_element is not None
-            else None
-        )
 
     def _extract_teachers(self):
         teachers = {}
@@ -113,20 +85,6 @@ class SuplovaniUcitele:
             if teacher_id:
                 teachers[teacher_id] = (teacher_name, teacher_short)
         return teachers
-
-    def _extract_subjects(self):
-        return {
-            subject.find("REALIZACE_ID").text: subject.find("Zkratka").text
-            for subject in self.root.findall(".//Predmet")
-            if subject.find("REALIZACE_ID") is not None
-        }
-
-    def _extract_classrooms(self):
-        return {
-            room.find("MISTNOST_ID").text: room.find("Zkratka").text
-            for room in self.root.findall(".//Mistnost")
-            if room.find("MISTNOST_ID") is not None
-        }
 
     def _extract_event_room_mappings(self):
         mappings = {}
@@ -173,13 +131,6 @@ class SuplovaniUcitele:
             event.find("UDALOST_ID").text: event.find("SKUPINA_ID").text
             for event in self.root.findall(".//UdalostStudijniSkupiny")
             if event.find("UDALOST_ID") is not None
-        }
-
-    def _extract_periods(self):
-        return {
-            period.find("OBDOBI_DNE_ID").text: period.find("Nazev").text
-            for period in self.root.findall(".//VyucovaciHodinaOd")
-            if period.find("OBDOBI_DNE_ID") is not None
         }
 
     def _extract_absence_reasons(self):
@@ -344,20 +295,22 @@ class SuplovaniUcitele:
         absences = self.extract_absences()
         substitutions = self.extract_substitutions()
 
+        timestamp = self.date.strftime('%Y_%m_%d')
+
         if output_format == "csv":
             pd.DataFrame(substitutions).to_csv(
-                f"{self._path}/suplovani_{self.date.strftime('%Y_%m_%d')}.csv",
+                f"{self._path}/suplovani_{timestamp}.csv",
                 index=False,
                 sep=";",
             )
             pd.DataFrame(absences).to_csv(
-                f"{self._path}/absences_{self.date.strftime('%Y_%m_%d')}.csv",
+                f"{self._path}/absences_{timestamp}.csv",
                 index=False,
                 sep=";",
             )
             return "CSV files generated."
 
-        elif output_format == "html":
+        if output_format == "html":
             env = Environment(loader=FileSystemLoader(self.template_folder))
             template = env.get_template("teachers.html")
             html_content = template.render(
@@ -367,18 +320,17 @@ class SuplovaniUcitele:
             )
 
             with open(
-                f"{self._path}/suplovani_{self.date.strftime('%Y_%m_%d')}.html",
+                f"{self._path}/suplovani_{timestamp}.html",
                 "w",
                 encoding="utf-8",
             ) as f:
                 f.write(html_content)
             return "HTML file generated."
 
-        elif output_format == "pdf":
+        if output_format == "pdf":
             HTML(
-                filename=f"{self._path}/suplovani_{self.date.strftime('%Y_%m_%d')}.html"
-            ).write_pdf(f"{self._path}/suplovani_{self.date.strftime('%Y_%m_%d')}.pdf")
+                filename=f"{self._path}/suplovani_{timestamp}.html"
+            ).write_pdf(f"{self._path}/suplovani_{timestamp}.pdf")
             return "PDF file generated."
 
-        else:
-            return "Unsupported format!"
+        return "Unsupported format!"
