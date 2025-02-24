@@ -1,29 +1,77 @@
-# Suplování ve ŠkolaOnline
+![Python](https://img.shields.io/badge/python-3.13-blue?style=for-the-badge&logo=python)
+![Status](https://img.shields.io/badge/status-active-brightgreen?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/spsehavirov/skolaonline-suplovani?style=for-the-badge)
+![License](https://img.shields.io/github/license/spsehavirov/skolaonline-suplovani?style=for-the-badge)
 
-Tato sada skriptů vznikla na základě potřeby přizpůsobit si export dat z ŠO pro suplování (a následné zobrazení na TV ve vestibulu školy). Protože ŠO nenabízí API,
-je potřeba ze stránky stáhnout XML soubor a ten zpracovat.
+# 📢 Suplování ve ŠkolaOnline
 
-## ./suplovani.py
+Tato sada skriptů vznikla z potřeby přizpůsobit export dat z ŠkolaOnline pro suplování a následné zobrazení na TV ve vestibulu školy. 
 
-Tento skript monitoruje složku (výchozí: `./watch`) a podud se tam oběví požadovaný formát (XML pro žáky nebo učitelé) tak ho zpracuje do CSV, HTML a PDF
+## 📌 **Proč?** 
+ŠO bohužel nenabízí API, takže data je nutné stáhnout ručně ve formátu XML a následně je zpracovat.
 
-## ./so_download.py
+## 🔧 **Co skript(y) umí?**  
+- ✅ Překonvertovat soubory, při startu programu
+- ✅ Automaticky sledovat složku pro nové soubory
+- ✅ Stahovat rozvrh suplování přímo ze ŠO 
+- ✅ Zpracovávat XML do CSV, HTML a PDF a png (číslované po stránkách)
+- ✅ Barvení záhlaví dle dne v týdnu
+- ✅ Filtrovat zobrazení pro vynechání tříd nebo naopak zahrnutí jen jich do výpisu
 
-Tento skript umožnuje stažení ze školy online pomocí automatizovaného prohlížeče
+- 🚧 Volba šablony, pro stažení (aktuálně je natvrdo naše školní)
+- 🚧 Najít jak obejít ŠO formulář a poslat data napřímo tak, abychom hned dostali výsledek (HTTPS POST místo Selenium)
 
-## Použití
+---
 
-Pro správné použití je potřeba vytvořit soubor `.env` a do něho nahrát tyto údaje:
+## ⚡ **Jak to funguje?**
+### 📂 **Struktura projektu**
+#### 🖥️ `suplovani.py`  
+👀 Sleduje složku (výchozí: `./watch`) a při detekci **platného XML** (pro žáky nebo učitele) ho automaticky převede do CSV, HTML a PDF.
+
+#### 🌐 `so_download.py`  
+🤖 Automatizuje **stahování dat ze ŠkolaOnline** pomocí prohlížeče (headless mode). Stačí zadat požadované datum a skript provede přihlášení + stažení dat.
+
+⚠️ **.env** soubor
+Aby bylo možné příhlásit se do `skolaonline.cz` z automatizovaného prohlížeče, je nutné mít ve složce vytvořený soubor `.env` (viz instalace)
+
+🖥️ **Prohlížeč**
+Testováno s prohlížečem Chrome (na macOS), ale Selenium by mělo pracovat i s Firefoxem a Edgem.
+
+---
+
+## 🚀 **Instalace & Použití**
+### 1️⃣ **Nastavení přihlašovacích údajů**
+Nejprve vytvořte soubor `.env` s přihlašovacími údaji:
 
 ```ini
 SO_USER=<vas-ucet-ve-skoleonline>
 SO_PASS=<vase-heslo-pro-skoluonline>
 ```
-
+### 2️⃣ Instalace závislostí
 ```bash
 $ ./install
 $ source bin/activate
-$ (virt-env) ./suplovani.py # Zapne monitorování složky
-
-$ (virt-env) ./so_download.py --date "20.2.2025" --headless # Stáhne data k požadovaného datu
 ```
+### 3️⃣ Spuštění skriptů
+📡 Sledování složky a zpracování XML:
+```bash
+$ (virt-env) ./suplovani.py # Zapne monitorování složky
+```
+🌍 Stažení suplování pro konkrétní datum:
+```bash
+$ (virt-env) ./so_download.py --date "25.2.2025" --headless # Stáhne data k požadovaného datu
+```
+
+##💡 **Tipy & Vylepšení** 
+----------------------- 
+- ⚙ **Automatizace:** Skripty lze spustit jako **cron job** nebo Windows Task Scheduler. 
+- 📺 **TV Displej:** HTML výstup lze snadno zobrazit na **informační obrazovce**, nebo pomocí `feh` zobrazte obrázky
+- 🔄 **Integrace s dalšími systémy:** Možnost úpravy výstupu pro školní web či digitální nástěnku. (CSS je přímo integrované v souboru)
+
+## 🎯 Proč to používat?
+
+- 🚀 Úspora času – automatické zpracování znamená méně ruční práce
+- 📡 Aktualizace v reálném čase – stačí změnit soubor, výstup se vygeneruje
+- 🎛 Flexibilita – výstup lze upravit pro různé potřeby školy
+
+🔹 Naprogramováno s ❤️ pro učitelé, kteří potřebují méně chaosu ve svých suplováních!
