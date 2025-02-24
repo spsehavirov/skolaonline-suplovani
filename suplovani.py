@@ -39,6 +39,13 @@ Example config.yaml:
       watch_folder: "./watch"
       output_folder: "./output"
       check_interval: 10
+      output:
+        - csv
+        - html
+        - pdf
+        - png
+      exclude/include:
+        - 1A
 """
 
 # pylint: disable=R0801
@@ -48,24 +55,23 @@ import time
 import shutil
 import xml.etree.ElementTree as ET
 
-import yaml
-from supl import SuplovaniUcitele, SuplovaniZaci
+from supl import SuplovaniUcitele, SuplovaniZaci, Settings
 
 # Load configuration from YAML file
-with open("config.yaml", "r", encoding="utf-8") as config_file:
-    config = yaml.safe_load(config_file)
+config = Settings(config_path="config.yaml", cache_ttl=10)
 
-WATCH_FOLDER = config["settings"]["watch_folder"]
-OUTPUT_FOLDER = config["settings"]["output_folder"]
-CHECK_INTERVAL = config["settings"]["check_interval"]
+# This config options require you to restart the monitor!
+WATCH_FOLDER = config.get("watch_folder")
+CHECK_INTERVAL = config.get("check_interval")
 PROCESSED_FOLDER = os.path.join(WATCH_FOLDER, "processed")
 
 # Ensure processed folder exists
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
+
 def detect_suplovani_type(xml_file):
     """
-        Detects if the XML file is for students or teachers.
+    Detects if the XML file is for students or teachers.
     """
     tree = ET.parse(xml_file)
     root = tree.getroot()
@@ -76,9 +82,10 @@ def detect_suplovani_type(xml_file):
         return "teachers"
     return None
 
+
 def process_suplovani(xml_file):
     """
-        Detect the type and process the XML file accordingly.
+    Detect the type and process the XML file accordingly.
     """
     suplovani_type = detect_suplovani_type(xml_file)
 
@@ -87,25 +94,25 @@ def process_suplovani(xml_file):
         return
 
     if suplovani_type == "teachers":
-        print("📂 Detected TEACHERS' suplování XML")
-        supl = SuplovaniUcitele(xml_file)
+        print("📂 Detected 'TEACHERS' suplování XML")
+        supl = SuplovaniUcitele(xml_file, config)
     else:
-        print("📂 Detected STUDENTS' suplování XML")
-        supl = SuplovaniZaci(xml_file)
+        print("📂 Detected 'STUDENTS' suplování XML")
+        supl = SuplovaniZaci(xml_file, config)
 
-    supl.export_path(OUTPUT_FOLDER)
-    print(supl.generate("csv"))
-    print(supl.generate("html"))
-    print(supl.generate("pdf"))
-    print(supl.generate("png"))
+    supl.export_path(config.get("output_folder", "./outputs"))
+
+    for f in config.get("output"):
+        print(supl.generate(f))
 
     # Move processed file
     shutil.move(xml_file, os.path.join(PROCESSED_FOLDER, os.path.basename(xml_file)))
     print(f"📂 Moved {xml_file} to {PROCESSED_FOLDER}")
 
+
 def process_existing_files():
     """
-        Process all existing XML files in the watch folder on startup.
+    Process all existing XML files in the watch folder on startup.
     """
     print("🔄 Processing existing XML files...")
     for file in os.listdir(WATCH_FOLDER):
@@ -114,9 +121,10 @@ def process_existing_files():
             print(f"📂 Processing existing XML: {file}")
             process_suplovani(file_path)
 
+
 def monitor_folder():
     """
-        Monitor a folder for new XML files and process them.
+    Monitor a folder for new XML files and process them.
     """
     processed_files = set(os.listdir(WATCH_FOLDER))
 
@@ -132,6 +140,7 @@ def monitor_folder():
                 process_suplovani(file_path)
 
         processed_files = current_files
+
 
 if __name__ == "__main__":
     try:

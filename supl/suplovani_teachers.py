@@ -35,7 +35,7 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
 from .suplovani_base import SuplovaniBase
-
+from .settings import Settings
 
 class SuplovaniUcitele(SuplovaniBase):
     """
@@ -56,8 +56,8 @@ class SuplovaniUcitele(SuplovaniBase):
         _path (str): Output directory path for file exports.
     """
 
-    def __init__(self, xml_file, template_folder="templates"):
-        super().__init__(xml_file, template_folder)
+    def __init__(self, xml_file, settings: Settings, template_folder="templates"):
+        super().__init__(xml_file, settings, template_folder)
 
         # Extract mappings
         self.class_mapping = self._extract_class_mappings()

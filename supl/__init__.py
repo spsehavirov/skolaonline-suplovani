@@ -17,5 +17,6 @@ Usage:
 """
 from .suplovani_teachers import SuplovaniUcitele
 from .suplovani_students import SuplovaniZaci
+from .settings import Settings
 
-__all__ = ["SuplovaniUcitele", "SuplovaniZaci"]
+__all__ = ["SuplovaniUcitele", "SuplovaniZaci", "Settings"]

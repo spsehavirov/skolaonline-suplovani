@@ -3,3 +3,14 @@ settings:
   output_folder: "./outputs"
   valid_xml_tag: "NewDataSet"
   check_interval: 2  # Time in seconds between folder checks
+  output: # File formats to be generated (Attention: there is an order!)
+    #- csv
+    - html
+    - pdf
+    - png
+  exclude: []
+    #- "1A"
+    #- "1B"
+    #- 1C
+  include: []
+    #- "1A"

@@ -44,6 +44,7 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
 from .suplovani_base import SuplovaniBase
+from .settings import Settings
 
 
 class SuplovaniZaci(SuplovaniBase):
@@ -55,8 +56,8 @@ class SuplovaniZaci(SuplovaniBase):
     cancellation and substitution happening at the same time)
     """
 
-    def __init__(self, xml_file, template_folder="templates"):
-        super().__init__(xml_file, template_folder)
+    def __init__(self, xml_file, settings: Settings, template_folder="templates"):
+        super().__init__(xml_file, settings, template_folder)
 
         # Extract mappings
         self.teacher_mapping = self._extract_teachers()
@@ -180,19 +181,32 @@ class SuplovaniZaci(SuplovaniBase):
                 else ""
             )
 
-            substitutions.append(
-                {
-                    "Class": class_name,
-                    "Period": period,
-                    "Subject": subject,
-                    "Group": group_name,
-                    "Room": room,
-                    "Teacher": teacher_info["name"],
-                    "Teacher_Abbreviation": teacher_info["abbreviation"],
-                    "Resolution": resolution,
-                    "Note": note,
-                }
-            )
+            write = True
+            if (
+                self.classes_to_include() is not None
+                and len(self.classes_to_include()) > 0
+            ):
+                write = class_name in self.classes_to_include()
+            elif (
+                self.classes_to_exclude() is not None
+                and len(self.classes_to_exclude()) > 0
+            ):
+                write = class_name not in self.classes_to_exclude()
+
+            if write:
+                substitutions.append(
+                    {
+                        "Class": class_name,
+                        "Period": period,
+                        "Subject": subject,
+                        "Group": group_name,
+                        "Room": room,
+                        "Teacher": teacher_info["name"],
+                        "Teacher_Abbreviation": teacher_info["abbreviation"],
+                        "Resolution": resolution,
+                        "Note": note,
+                    }
+                )
         return substitutions
 
     def extract_final_substitutions(self, records):
@@ -351,7 +365,7 @@ class SuplovaniZaci(SuplovaniBase):
             localized_day = czech_day_names.get(day_of_week, "Neznámý den")
 
             html_content = template.render(
-                date=self.timestamp(),
+                date=self.date.strftime("%d.%m.%Y"),
                 substitutions=substitutions,
                 header_color=header_color,
                 day=localized_day,
