@@ -310,9 +310,21 @@ class SuplovaniZaci(SuplovaniBase):
 
         return final_list
 
-    def timestamp(self):
-        """Get the timestamp for the filenames"""
-        return self.date.strftime("%Y_%m_%d")
+    def _export_filename_prefix(self):
+        day_of_week = self.date.isoweekday()
+
+        day_names = {
+            1: "po",
+            2: "ut",
+            3: "st",
+            4: "ct",
+            5: "pa",
+            6: "so",
+            7: "ne",
+        }
+
+        return f"supl_{self.date.strftime('%y-%m-%d')}_{day_names.get(day_of_week, "x")}"
+
 
     def generate(self, output_format):
         """
@@ -324,16 +336,18 @@ class SuplovaniZaci(SuplovaniBase):
         raw_substitutions = self.extract_substitutions()
         substitutions = self.extract_final_substitutions2(raw_substitutions)
 
+        #supl_YY-MM-DD_den(2).
+
         if output_format == "csv":
             export_to = (
-                f"{self._path}/suplovani_students_{self.date.strftime('%Y_%m_%d')}.csv"
+                f"{self._path}/{self._export_filename_prefix()}.csv"
             )
             pd.DataFrame(substitutions).to_csv(export_to, index=False, sep=";")
             return "CSV file generated."
 
         if output_format == "html":
             export_to = (
-                f"{self._path}/suplovani_students_{self.date.strftime('%Y_%m_%d')}.html"
+                f"{self._path}/{self._export_filename_prefix()}.html"
             )
 
             env = Environment(loader=FileSystemLoader(self.template_folder))
@@ -376,14 +390,14 @@ class SuplovaniZaci(SuplovaniBase):
             return "HTML file generated."
 
         if output_format == "pdf":
-            import_from = f"{self._path}/suplovani_students_{self.timestamp()}.html"
-            export_to = f"{self._path}/suplovani_students_{self.timestamp()}.pdf"
+            import_from = f"{self._path}/{self._export_filename_prefix()}.html"
+            export_to = f"{self._path}/{self._export_filename_prefix()}.pdf"
             HTML(filename=import_from).write_pdf(export_to)
             return "PDF file generated."
 
         if output_format == "png":
-            pdf = f"{self._path}/suplovani_students_{self.timestamp()}.pdf"
-            export_prefix = f"{self._path}/suplovani_students_{self.timestamp()}"
+            pdf = f"{self._path}/{self._export_filename_prefix()}.pdf"
+            export_prefix = f"{self._path}/{self._export_filename_prefix()}"
 
             doc = pymupdf.open(pdf)
             desired_dpi = 600
@@ -397,7 +411,7 @@ class SuplovaniZaci(SuplovaniBase):
                 # Render the page to an image (pixmap)
                 pix = page.get_pixmap(matrix=mat)
                 # Define output filename
-                output_filename = f"{export_prefix}__{page_number + 1}.png"
+                output_filename = f"{export_prefix}_{page_number + 1}.png"
                 # Save the image
                 pix.save(output_filename)
                 print(f"Saved {output_filename}")
