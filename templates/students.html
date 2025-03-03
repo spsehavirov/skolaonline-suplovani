@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Suplování pro studenty - {{ date }}</title>
     <style>
+        * {
+            font-size: 1rem;
+        }
         @page { size: A4 landscape; margin: .2rem; }
         @media print {
             tr:has(td[colspan]) {
@@ -12,7 +15,11 @@
             }
         }
         body { font-family: Arial, sans-serif; font-size: 12px; }
-        .container { width: 90%; margin: auto; }
+        .container {
+            /*width: 90%;
+            margin: auto;*/
+            padding-left: 4em;
+        }
         h2 { text-align: center; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         th, td { border: 1px solid black; padding: 8px; text-align: left; }
@@ -25,6 +32,13 @@
 
         /* Header row styling */
         thead th { background-color: {{ header_color }}; color: white; }
+        .class {
+            text-align: center;
+            font-weight: 600;
+        }
+        .subject {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -34,7 +48,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Třída</th>
+                    <th class="class">Třída</th>
                     <th>Hodina</th>
                     <th>Předmět</th>
                     <th>Skupina</th>
@@ -51,10 +65,10 @@
                 {% for sub in sorted_subs %}
                 <tr class="substitution">
                     {% if loop.first %}
-                    <td rowspan="{{ rowspan }}">{{ sub.Class }}</td>
+                    <td rowspan="{{ rowspan }}" class="class">{{ sub.Class }}</td>
                     {% endif %}
                     <td>{{ sub.Period }}</td>
-                    <td>{{ sub.Subject }}</td>
+                    <td class="subject">{{ sub.Subject }}</td>
                     <td>{{ sub.Group }}</td>
                     <td>{{ sub.Room }}</td>
                     <td>{{ sub.Teacher }} [{{ sub.Teacher_Abbreviation }}]</td>

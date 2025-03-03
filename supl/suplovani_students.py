@@ -38,6 +38,9 @@ Usage Example:
 # pylint: disable=R0902
 # pylint: disable=R0801
 
+import os
+import glob
+
 import pymupdf
 import pandas as pd
 from weasyprint import HTML
@@ -325,6 +328,14 @@ class SuplovaniZaci(SuplovaniBase):
 
         return f"supl_{self.date.strftime('%y-%m-%d')}_{day_names.get(day_of_week, "x")}"
 
+    def _cleanup(self, extension):
+        pattern = os.path.join(self._path, f"{self._export_filename_prefix()}*.{extension}")
+        for file_to_delete in glob.glob(pattern):
+            try:
+                os.remove(file_to_delete)
+                print(f"Deleted file: {file_to_delete}")
+            except OSError as e:
+                print(f"Error deleting file {file_to_delete}: {e}")
 
     def generate(self, output_format):
         """
@@ -336,7 +347,7 @@ class SuplovaniZaci(SuplovaniBase):
         raw_substitutions = self.extract_substitutions()
         substitutions = self.extract_final_substitutions2(raw_substitutions)
 
-        #supl_YY-MM-DD_den(2).
+        self._cleanup(output_format) # CLEANUP the previous versions
 
         if output_format == "csv":
             export_to = (
