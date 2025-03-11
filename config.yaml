@@ -4,7 +4,7 @@ settings:
   valid_xml_tag: "NewDataSet"
   check_interval: 2  # Time in seconds between folder checks
   output: # File formats to be generated (Attention: there is an order!)
-    #- csv
+    - csv
     - html
     - pdf
     - png

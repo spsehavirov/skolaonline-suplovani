@@ -38,6 +38,7 @@
         }
         .subject {
             font-weight: 600;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -71,7 +72,7 @@
                     <td class="subject">{{ sub.Subject }}</td>
                     <td>{{ sub.Group }}</td>
                     <td>{{ sub.Room }}</td>
-                    <td>{{ sub.Teacher }} [{{ sub.Teacher_Abbreviation }}]</td>
+                    <td style="text-transform: uppercase;"><b>{{ sub.Teacher_Abbreviation }}</b></td><!-- [{{ sub.Teacher }} ]  -->
                     <td>{{ sub.Resolution }}</td>
                     <td>{{ sub.Note }}</td>
                 </tr>

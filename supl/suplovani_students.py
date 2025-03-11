@@ -116,22 +116,40 @@ class SuplovaniZaci(SuplovaniBase):
         }
 
     def _extract_event_room_mappings(self):
-        return {
-            event.find("UDALOST_ID").text: self.room_mapping.get(
-                event.find("MISTNOST_ID").text, ""
+        mappings = {}
+        for event in self.root.findall(".//UdalostMistnost"):
+            event_id = (
+                event.find("UDALOST_ID").text
+                if event.find("UDALOST_ID") is not None
+                else ""
             )
-            for event in self.root.findall(".//UdalostMistnost")
-            if event.find("UDALOST_ID") is not None
-            and event.find("MISTNOST_ID") is not None
-        }
+            room_id = (
+                event.find("MISTNOST_ID").text
+                if event.find("MISTNOST_ID") is not None
+                else ""
+            )
+            if event_id and room_id:
+                if event_id not in mappings:
+                    mappings[event_id] = []
+                mappings[event_id].append(self.room_mapping.get(room_id, ""))
+        return mappings
 
     def _extract_event_teacher_mappings(self):
-        return {
-            event.find("UDALOST_ID").text: event.find("OSOBA_ID").text
-            for event in self.root.findall(".//UdalostOsoba")
-            if event.find("UDALOST_ID") is not None
-            and event.find("OSOBA_ID") is not None
-        }
+        teachers_by_event = {}  # Používáme běžný slovník
+
+        for event in self.root.findall(".//UdalostOsoba"):
+            udalost_id = event.find("UDALOST_ID")
+            osoba_id = event.find("OSOBA_ID")
+
+            if udalost_id is not None and osoba_id is not None:
+                uid = udalost_id.text
+                oid = osoba_id.text
+
+                if uid not in teachers_by_event:
+                    teachers_by_event[uid] = []  # Inicializujeme prázdný seznam
+                teachers_by_event[uid].append(oid)  # Přidáme osobu k události
+        return teachers_by_event
+
 
     def extract_substitutions(self):
         """Get the main data structure out of the XML for further processing"""
@@ -166,12 +184,18 @@ class SuplovaniZaci(SuplovaniBase):
                 ),
                 "",
             )
-            room = self.event_room_mapping.get(event_id, "")
+            rooms = self.event_room_mapping.get(event_id, [""])
+            room = ", ".join(rooms)
 
-            osoba_id = self.event_teacher_mapping.get(event_id, "")
-            teacher_info = self.teacher_mapping.get(
-                osoba_id, {"abbreviation": "", "name": ""}
-            )
+            # osoba_id = self.event_teacher_mapping.get(event_id, "")
+            # teacher_info = self.teacher_mapping.get(
+            #     osoba_id, {"abbreviation": "", "name": ""}
+            # )
+            osoba_ids = self.event_teacher_mapping.get(event_id, [])  # Fetch list of teacher IDs
+            teachers_info = [self.teacher_mapping.get(oid, {"abbreviation": "", "name": ""}) for oid in osoba_ids]
+            teacher_names = ", ".join([t["name"] for t in teachers_info if t["name"]])  # Combine names
+            teacher_abbreviations = ", ".join([t["abbreviation"] for t in teachers_info if t["abbreviation"]])  # Combine abbreviations
+
 
             resolution = (
                 record.find("ZpusobReseni").text
@@ -204,8 +228,8 @@ class SuplovaniZaci(SuplovaniBase):
                         "Subject": subject,
                         "Group": group_name,
                         "Room": room,
-                        "Teacher": teacher_info["name"],
-                        "Teacher_Abbreviation": teacher_info["abbreviation"],
+                        "Teacher": teacher_names, #teacher_info["name"],
+                        "Teacher_Abbreviation": teacher_abbreviations, #teacher_info["abbreviation"],
                         "Resolution": resolution,
                         "Note": note,
                     }
@@ -353,7 +377,7 @@ class SuplovaniZaci(SuplovaniBase):
             export_to = (
                 f"{self._path}/{self._export_filename_prefix()}.csv"
             )
-            pd.DataFrame(substitutions).to_csv(export_to, index=False, sep=";")
+            pd.DataFrame(raw_substitutions).to_csv(export_to, index=False, sep=";")
             return "CSV file generated."
 
         if output_format == "html":
