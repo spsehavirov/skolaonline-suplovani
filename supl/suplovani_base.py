@@ -53,6 +53,27 @@ class SuplovaniBase:
         self.room_mapping = self._extract_classrooms()
         self.period_mapping = self._extract_periods()
 
+    @staticmethod
+    def get(record, key, default=""):
+        """
+        Retrieves the text content of a given XML key from a record.
+        If the key is missing, returns the default value.
+
+        Args:
+            record (ElementTree.Element): The XML record to search in.
+            key (str): The XML tag name to find.
+            default (str, optional): The value to return if key is missing. Defaults to "".
+
+        Returns:
+            str: The extracted text value or the default value.
+        """
+        element = record.find(key)
+        return (
+            element.text
+            if element is not None and element.text is not None
+            else default
+        )
+
     def classes_to_exclude(self):
         """Classes to be excluded from generation (only for studens subs.)"""
         return set(self.settings.get("exclude", []))
@@ -92,13 +113,29 @@ class SuplovaniBase:
         }
 
     def _extract_periods(self):
-        """Extracts period mapping from XML."""
-        return {
-            period.find("OBDOBI_DNE_ID").text: period.find("Nazev").text
-            for period in self.root.findall(".//VyucovaciHodinaOd")
-            if period.find("OBDOBI_DNE_ID") is not None
-            and period.find("Nazev") is not None
-        }
+        """Extracts period mapping from XML, handling multi-hour spans."""
+        periods = {}
+        for period in self.root.findall(".//VyucovaciHodinaOd"):
+            period_id = period.find("OBDOBI_DNE_ID")
+            name = period.find("Nazev")
+            hodina_od = period.find("HodinaOd")
+            hodina_do = period.find("HodinaDo")
+
+            if period_id is not None and name is not None:
+                period_id_text = period_id.text
+                period_name = name.text
+
+                # EDITED: Handle multi-hour periods
+                if (
+                    hodina_od is not None
+                    and hodina_do is not None
+                    and hodina_od.text != hodina_do.text
+                ):
+                    period_name = f"{hodina_od.text}-{hodina_do.text}"  # Show as range
+
+                periods[period_id_text] = period_name  # Store updated period name
+
+        return periods
 
     def generate(self, output_format):
         """Generate the output in the specified format (CSV, HTML, PDF)."""

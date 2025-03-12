@@ -47,6 +47,7 @@ import argparse
 from datetime import datetime
 
 import yaml
+from colorama import init, Fore
 from seleniumbase import BaseCase
 from selenium.webdriver.common.action_chains import ActionChains
 from dotenv import load_dotenv, set_key, unset_key, find_dotenv
@@ -58,6 +59,11 @@ load_dotenv(dotenv_path)
 # Retrieve the variable
 so_user = os.getenv("SO_USER")
 so_pass = os.getenv("SO_PASS")
+
+CONFIG = "config.yaml"
+
+# Init the colorama (colored output)
+init(autoreset=True)
 
 
 class RecorderTest(BaseCase):
@@ -83,6 +89,7 @@ class RecorderTest(BaseCase):
             Runs the automated test to log in, apply filters, download the XML file,
             and move it to the correct directory.
     """
+
     custom_date = None
 
     def intercept_response(self, request, response):
@@ -105,7 +112,7 @@ class RecorderTest(BaseCase):
 
     def test_recording(self):
         """
-        Automates the process of logging into SkolaOnline.cz and downloading 
+        Automates the process of logging into SkolaOnline.cz and downloading
         an XML report.
 
         This method performs the following steps:
@@ -167,31 +174,31 @@ class RecorderTest(BaseCase):
         #    the default folder.
         self.sleep(5)
         download_dir = self.get_downloads_folder()
-        print("Download directory: " + download_dir)
+        print(Fore.YELLOW + "Download directory: " + download_dir)
 
         # Look for an XML file in that folder
         files = os.listdir(download_dir)
         xml_files = [f for f in files if f.lower().endswith(".xml")]
 
-        with open("config.yaml", "r", encoding="utf-8") as config_file:
-            config = yaml.safe_load(config_file)
+        with open(CONFIG, "r", encoding="utf-8") as conf_file:
+            conf = yaml.safe_load(conf_file)
 
         if xml_files:
             xml_file = os.path.join(download_dir, xml_files[0])
-            print("Downloaded XML file: " + xml_file)
+            print(Fore.MAGENTA + "Downloaded XML file: " + xml_file)
             # Option 2: Copy the file to a different location (e.g., current working directory)
-            datestamp = (
-                datetime.strptime(self.custom_date, '%d.%m.%Y').strftime('%Y-%m-%d')
+            datestamp = datetime.strptime(self.custom_date, "%d.%m.%Y").strftime(
+                "%Y-%m-%d"
             )
-            watch_folder = config["settings"]["watch_folder"]
+            watch_folder = conf["settings"]["watch_folder"]
             destination = os.path.join(
                 os.getcwd(),
                 f"{watch_folder}/so_suplovani_students-{datestamp}.xml",
             )
             shutil.move(xml_file, destination)
-            print("XML file copied to: " + destination)
+            print(Fore.GREEN + "XML file copied to: " + destination)
         else:
-            print("No XML file was downloaded.")
+            print(Fore.YELLOW + "No XML file was downloaded.")
 
         unset_key(dotenv_path, "DATE_TO_PROCESS")
 
@@ -204,17 +211,61 @@ if __name__ == "__main__":
     parser.add_argument(
         "--date", help="Provide date for the script to get", default=None
     )
+    parser.add_argument(
+        "--include", help="Comma-separated list of items to include", default=None
+    )
+    parser.add_argument(
+        "--exclude", help="Comma-separated list of items to exclude", default=None
+    )
+    parser.add_argument(
+        "--clear",
+        help="Clear include/exclude lists before adding new values",
+        action="store_true",
+    )
 
     # Parse known args and leave the rest for SeleniumBase/pytest
     args, remaining_args = parser.parse_known_args()
 
     # Process your custom argument as needed
     if args.date:
-        print("Custom date to process:", args.date)
+        print("Custom date to process:", Fore.CYAN + args.date)
         set_key(dotenv_path, "DATE_TO_PROCESS", args.date)
+
+    if os.path.exists(CONFIG):
+        with open(CONFIG, "r", encoding="utf-8") as config_file:
+            config = yaml.safe_load(config_file)
+    else:
+        config = {"settings": {}, "include": [], "exclude": []}
+
+    # Ensure include/exclude lists exist
+    config.setdefault("settings", {})
+    config["settings"].setdefault("exclude", [])
+    config["settings"].setdefault("include", [])
+
+    # Handle --clear flag
+    if args.clear:
+        print(Fore.YELLOW + "Cleared all include/exclude rules")
+        config["settings"]["exclude"] = []
+        config["settings"]["include"] = []
+
+    # Update include/exclude lists
+    if args.include:
+        print(Fore.GREEN + f"Include: {args.include}")
+        include_list = [item.strip().upper() for item in args.include.split(",")]
+        config["settings"]["include"].extend(include_list)
+
+    if args.exclude:
+        print(Fore.RED + f"Exclude: {args.exclude}")
+        exclude_list = [item.strip().upper() for item in args.exclude.split(",")]
+        config["settings"]["exclude"].extend(exclude_list)
+
+    # Save changes to config.yaml
+    with open(CONFIG, "w", encoding="utf-8") as config_file:
+        yaml.safe_dump(
+            config, config_file, default_flow_style=False, allow_unicode=True
+        )
 
     # Replace sys.argv with the remaining args so that BaseCase.main gets only what it expects
     sys.argv = [sys.argv[0]] + remaining_args
-
     # Now run SeleniumBase's main, which will handle the remaining command-line arguments
     BaseCase.main(__name__, __file__)

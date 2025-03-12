@@ -1,16 +1,13 @@
 settings:
-  watch_folder: "./watch" #"/path/to/watch/folder"
-  output_folder: "./outputs"
-  valid_xml_tag: "NewDataSet"
-  check_interval: 2  # Time in seconds between folder checks
-  output: # File formats to be generated (Attention: there is an order!)
-    - csv
-    - html
-    - pdf
-    - png
-  exclude: []
-    #- "1A"
-    #- "1B"
-    #- 1C
+  check_interval: 2
+  exclude:
+  - 3D
   include: []
-    #- "1A"
+  output:
+  - csv
+  - html
+  - pdf
+  - png
+  output_folder: ./outputs
+  valid_xml_tag: NewDataSet
+  watch_folder: ./watch

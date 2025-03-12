@@ -55,6 +55,7 @@ import time
 import shutil
 import xml.etree.ElementTree as ET
 
+from colorama import init, Fore
 from supl import SuplovaniUcitele, SuplovaniZaci, Settings
 
 # Load configuration from YAML file
@@ -68,6 +69,8 @@ PROCESSED_FOLDER = os.path.join(WATCH_FOLDER, "processed")
 # Ensure processed folder exists
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
+# Enable colored terminal output
+init(autoreset=True)
 
 def detect_suplovani_type(xml_file):
     """
@@ -90,35 +93,35 @@ def process_suplovani(xml_file):
     suplovani_type = detect_suplovani_type(xml_file)
 
     if suplovani_type is None:
-        print("📂 Unknown XML, skipping ...")
+        print(Fore.RED + "📂 Unknown XML, skipping ...")
         return
 
     if suplovani_type == "teachers":
-        print("📂 Detected 'TEACHERS' suplování XML")
+        print(Fore.LIGHTGREEN_EX + "📂 Detected 'TEACHERS' suplování XML")
         supl = SuplovaniUcitele(xml_file, config)
     else:
-        print("📂 Detected 'STUDENTS' suplování XML")
+        print(Fore.GREEN + "📂 Detected 'STUDENTS' suplování XML")
         supl = SuplovaniZaci(xml_file, config)
 
     supl.export_path(config.get("output_folder", "./outputs"))
 
     for f in config.get("output"):
-        print(supl.generate(f))
+        print(Fore.YELLOW + supl.generate(f))
 
     # Move processed file
     shutil.move(xml_file, os.path.join(PROCESSED_FOLDER, os.path.basename(xml_file)))
-    print(f"📂 Moved {xml_file} to {PROCESSED_FOLDER}")
+    print(Fore.MAGENTA + f"📂 Moved {xml_file} to {PROCESSED_FOLDER}")
 
 
 def process_existing_files():
     """
     Process all existing XML files in the watch folder on startup.
     """
-    print("🔄 Processing existing XML files...")
+    print(Fore.YELLOW + "🔄 Processing existing XML files...")
     for file in os.listdir(WATCH_FOLDER):
         file_path = os.path.join(WATCH_FOLDER, file)
         if file.endswith(".xml"):
-            print(f"📂 Processing existing XML: {file}")
+            print(Fore.CYAN + f"📂 Processing existing XML: {file}")
             process_suplovani(file_path)
 
 
@@ -136,7 +139,7 @@ def monitor_folder():
         for file in new_files:
             if file.endswith(".xml"):
                 file_path = os.path.join(WATCH_FOLDER, file)
-                print(f"📂 New XML detected: {file}")
+                print(Fore.GREEN + f"📂 New XML detected: {file}")
                 process_suplovani(file_path)
 
         processed_files = current_files
@@ -144,8 +147,8 @@ def monitor_folder():
 
 if __name__ == "__main__":
     try:
-        print(f"🔍 Monitoring folder: {WATCH_FOLDER}")
+        print(Fore.MAGENTA + f"🔍 Monitoring folder: {WATCH_FOLDER}")
         process_existing_files()
         monitor_folder()
     except KeyboardInterrupt:
-        print("\n🛑 Monitoring stopped by user.")
+        print(Fore.BLUE + "\n🛑 Monitoring stopped by user.")

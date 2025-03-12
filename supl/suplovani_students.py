@@ -40,6 +40,7 @@ Usage Example:
 
 import os
 import glob
+from datetime import datetime
 
 import pymupdf
 import pandas as pd
@@ -48,6 +49,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from .suplovani_base import SuplovaniBase
 from .settings import Settings
+from .hours import SchoolSchedule
 
 
 class SuplovaniZaci(SuplovaniBase):
@@ -69,6 +71,7 @@ class SuplovaniZaci(SuplovaniBase):
         self.event_group_mapping = self._extract_event_group_mappings()
         self.event_room_mapping = self._extract_event_room_mappings()
         self.event_teacher_mapping = self._extract_event_teacher_mappings()
+        self.absence_reason_mapping = self._extract_absence_reasons()
 
     def _extract_teachers(self):
         return {
@@ -150,16 +153,76 @@ class SuplovaniZaci(SuplovaniBase):
                 teachers_by_event[uid].append(oid)  # Přidáme osobu k události
         return teachers_by_event
 
+    def _extract_absence_reasons(self):
+        return {
+            absence.find("SUPL_DRUH_ABSENCE_ID").text: absence.find("Nazev").text
+            for absence in self.root.findall(".//SuplovaniDruhAbsence")
+        }
+
+    def extract_absences(self):
+        """
+        Extracts teacher absences from the XML file.
+
+        This method retrieves absence records, maps them to corresponding teachers,
+        and associates them with predefined absence reasons.
+
+        Returns:
+            list[dict]: A list of dictionaries, each containing:
+                - "Teacher": Name of the absent teacher.
+                - "Reason": Reason for absence.
+
+        Example Output:
+            [
+                {"Teacher": "John Doe", "Reason": "Sick Leave"},
+                {"Teacher": "Jane Smith", "Reason": "Personal Leave"}
+            ]
+        """
+        absences = []
+        schedule = SchoolSchedule()
+        for absence in self.root.findall(".//AbsenceZdrojeVeDni"):
+            reason_id = super().get(absence, "SUPL_DRUH_ABSENCE_ID")
+            reason = self.absence_reason_mapping.get(reason_id, "Neznámý důvod")
+
+            udalost_id = super().get(absence, "UDALOST_ID", None)
+
+            for teacher_absence in self.root.findall(".//AbsenceUcitele"):
+                tau = super().get(teacher_absence, "UDALOST_ID", False)
+                if udalost_id != tau:
+                    # skip unrelated teacher (another event)
+                    continue
+
+                teacher_id = super().get(teacher_absence, "OSOBA_ID", None)
+                if not teacher_id:
+                    print(f'Missing Teacher ID, skipping {teacher_absence}')
+                    continue
+
+                teacher_info = self.teacher_mapping.get(
+                    teacher_id, {"name": "Neznámý učitel"}
+                )  # Ensure it's a dict
+
+                od = super().get(absence, "Od")
+                do = super().get(absence, "Do")
+
+                # Using ISO 8601 datetime strings
+                _, period_range = schedule.from_iso(od, do)
+                #print(f"Detected Periods: {periods}, Range: {period_range}")
+
+                absences.append(
+                    {
+                        "Teacher": teacher_info.get("name", "Neznámý učitel"),
+                        "Reason": reason,
+                        "From": datetime.fromisoformat(od).strftime("%H:%M"),
+                        "To": datetime.fromisoformat(do).strftime("%H:%M"),
+                        "Periods": period_range,
+                    }
+                )
+        return absences
 
     def extract_substitutions(self):
         """Get the main data structure out of the XML for further processing"""
         substitutions = []
         for record in self.root.findall(".//VypisSuplovaniZaka"):
-            event_id = (
-                record.find("UDALOST_ID").text
-                if record.find("UDALOST_ID") is not None
-                else ""
-            )
+            event_id = super().get(record, "UDALOST_ID")
             group_id = self.event_group_mapping.get(event_id, "")
 
             class_name = self.group_mapping.get(group_id, {}).get("class", "")
@@ -168,45 +231,37 @@ class SuplovaniZaci(SuplovaniBase):
             if group_name == class_name:
                 group_name = ""
 
-            period = self.period_mapping.get(
-                (
-                    record.find("OBDOBI_DNE_ID").text
-                    if record.find("OBDOBI_DNE_ID") is not None
-                    else ""
-                ),
-                "",
-            )
-            subject = self.subject_mapping.get(
-                (
-                    record.find("REALIZACE_ID").text
-                    if record.find("REALIZACE_ID") is not None
-                    else ""
-                ),
-                "",
-            )
+            period = self.period_mapping.get(super().get(record, "OBDOBI_DNE_ID"), "")
+
+            # Workaround for the way the SO hangles the period ranges
+            od = super().get(record, "CasOd")
+            do = super().get(record, "CasDo")
+
+            schedule = SchoolSchedule()
+            _, period_range = schedule.from_iso(od, do)
+
+            if period != period_range:
+                period = period_range
+
+            subject = self.subject_mapping.get(super().get(record, "REALIZACE_ID"), "")
             rooms = self.event_room_mapping.get(event_id, [""])
             room = ", ".join(rooms)
 
-            # osoba_id = self.event_teacher_mapping.get(event_id, "")
-            # teacher_info = self.teacher_mapping.get(
-            #     osoba_id, {"abbreviation": "", "name": ""}
-            # )
-            osoba_ids = self.event_teacher_mapping.get(event_id, [])  # Fetch list of teacher IDs
-            teachers_info = [self.teacher_mapping.get(oid, {"abbreviation": "", "name": ""}) for oid in osoba_ids]
-            teacher_names = ", ".join([t["name"] for t in teachers_info if t["name"]])  # Combine names
-            teacher_abbreviations = ", ".join([t["abbreviation"] for t in teachers_info if t["abbreviation"]])  # Combine abbreviations
+            osoba_ids = self.event_teacher_mapping.get(event_id, [])
+            # Fetch list of teacher IDs
+            teachers_info = [
+                self.teacher_mapping.get(oid, {"abbreviation": "", "name": ""})
+                for oid in osoba_ids
+            ]
+            teacher_names = ", ".join(
+                [t["name"] for t in teachers_info if t["name"]]
+            )  # Combine names
+            teacher_abbreviations = ", ".join(
+                [t["abbreviation"] for t in teachers_info if t["abbreviation"]]
+            )  # Combine abbreviations
 
-
-            resolution = (
-                record.find("ZpusobReseni").text
-                if record.find("ZpusobReseni") is not None
-                else ""
-            )
-            note = (
-                record.find("Poznamka").text
-                if record.find("Poznamka") is not None
-                else ""
-            )
+            resolution = super().get(record, "ZpusobReseni")
+            note = super().get(record, "Poznamka")
 
             write = True
             if (
@@ -228,8 +283,8 @@ class SuplovaniZaci(SuplovaniBase):
                         "Subject": subject,
                         "Group": group_name,
                         "Room": room,
-                        "Teacher": teacher_names, #teacher_info["name"],
-                        "Teacher_Abbreviation": teacher_abbreviations, #teacher_info["abbreviation"],
+                        "Teacher": teacher_names,
+                        "Teacher_Abbreviation": teacher_abbreviations,
                         "Resolution": resolution,
                         "Note": note,
                     }
@@ -350,10 +405,14 @@ class SuplovaniZaci(SuplovaniBase):
             7: "ne",
         }
 
-        return f"supl_{self.date.strftime('%y-%m-%d')}_{day_names.get(day_of_week, "x")}"
+        return (
+            f"supl_{self.date.strftime('%y-%m-%d')}_{day_names.get(day_of_week, "x")}"
+        )
 
     def _cleanup(self, extension):
-        pattern = os.path.join(self._path, f"{self._export_filename_prefix()}*.{extension}")
+        pattern = os.path.join(
+            self._path, f"{self._export_filename_prefix()}*.{extension}"
+        )
         for file_to_delete in glob.glob(pattern):
             try:
                 os.remove(file_to_delete)
@@ -368,22 +427,19 @@ class SuplovaniZaci(SuplovaniBase):
         Currently the function expect the order for some type:
             -> HTML -> PDF -> PNG (subsequent file generation)
         """
+        absences = self.extract_absences()
         raw_substitutions = self.extract_substitutions()
         substitutions = self.extract_final_substitutions2(raw_substitutions)
 
-        self._cleanup(output_format) # CLEANUP the previous versions
+        self._cleanup(output_format)  # CLEANUP the previous versions
 
         if output_format == "csv":
-            export_to = (
-                f"{self._path}/{self._export_filename_prefix()}.csv"
-            )
+            export_to = f"{self._path}/{self._export_filename_prefix()}.csv"
             pd.DataFrame(raw_substitutions).to_csv(export_to, index=False, sep=";")
             return "CSV file generated."
 
         if output_format == "html":
-            export_to = (
-                f"{self._path}/{self._export_filename_prefix()}.html"
-            )
+            export_to = f"{self._path}/{self._export_filename_prefix()}.html"
 
             env = Environment(loader=FileSystemLoader(self.template_folder))
             template = env.get_template("students.html")
@@ -417,6 +473,7 @@ class SuplovaniZaci(SuplovaniBase):
                 date=self.date.strftime("%d.%m.%Y"),
                 substitutions=substitutions,
                 header_color=header_color,
+                absences=absences,
                 day=localized_day,
             )
 

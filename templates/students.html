@@ -45,6 +45,11 @@
 <body>
     <div class="container">
         <h2>Výpis suplování – {{ date }} ({{ day }})</h2>
+        <p style="width: 100%; text-align: center;">
+            {% for absence in absences|sort(attribute='Teacher') %}
+                <span class="absent">{{ absence.Teacher }} <!-- ({{ absence.Reason }})  ({{ absence.From }} - {{ absence.To }} ---> ({{ absence.Periods }}){% if not loop.last %}, {% endif %}</span>
+            {% endfor %}
+        </p>
 
         <table>
             <thead>
