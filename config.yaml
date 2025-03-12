@@ -1,7 +1,6 @@
 settings:
   check_interval: 2
-  exclude:
-  - 3D
+  exclude: []
   include: []
   output:
   - csv
