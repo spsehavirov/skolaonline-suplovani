@@ -59,7 +59,7 @@ $ (virt-env) ./suplovani.py # Zapne monitorování složky
 ```
 🌍 Stažení suplování pro konkrétní datum:
 ```bash
-$ (virt-env) ./so_download.py --date "25.2.2025" --headless # Stáhne data k požadovaného datu
+$ (virt-env) ./so_download.py --date "25.2.2025" --headless --clear --exclude=3A,1C # Stáhne data k požadovaného datu
 ```
 
 ##💡 **Tipy & Vylepšení** 
