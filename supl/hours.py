@@ -79,7 +79,7 @@ class SchoolSchedule:
                 detected_periods.append(period_name)
 
         # If both times are midnight, assume full-day absence
-        if from_time == time(0, 0) and to_time == time(0, 0):
+        if from_time <= self.periods["1"][0] and to_time == time(0, 0):
             return detected_periods, "celý den"
 
         # Determine a textual representation of the period range

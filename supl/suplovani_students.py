@@ -193,19 +193,27 @@ class SuplovaniZaci(SuplovaniBase):
 
                 teacher_id = super().get(teacher_absence, "OSOBA_ID", None)
                 if not teacher_id:
-                    print(f'Missing Teacher ID, skipping {teacher_absence}')
+                    print(f"Missing Teacher ID, skipping {teacher_absence}")
                     continue
 
                 teacher_info = self.teacher_mapping.get(
                     teacher_id, {"name": "Neznámý učitel"}
                 )  # Ensure it's a dict
 
+                # Skip the assistents and other personal from the absences
+                if teacher_info.get("abbreviation", None).upper() in [
+                    "KOP",
+                    "HRN",
+                    "HEI",
+                ]:
+                    continue
+
                 od = super().get(absence, "Od")
                 do = super().get(absence, "Do")
 
                 # Using ISO 8601 datetime strings
                 _, period_range = schedule.from_iso(od, do)
-                #print(f"Detected Periods: {periods}, Range: {period_range}")
+                # print(f"Detected Periods: {periods}, Range: {period_range}")
 
                 absences.append(
                     {
