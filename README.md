@@ -31,6 +31,12 @@ Tato sada skriptů vznikla z potřeby přizpůsobit export dat z ŠkolaOnline pr
 #### 🌐 `so_download.py`  
 🤖 Automatizuje **stahování dat ze ŠkolaOnline** pomocí prohlížeče (headless mode). Stačí zadat požadované datum a skript provede přihlášení + stažení dat.
 
+#### 🌐 `so_soap.py`
+🧪 Nová varianta stahování **bez prohlížeče** – využívá přímo HTTP/form POST (stejný požadavek, který posílá web). Je rychlejší a neotevírá žádný browser.
+
+#### 🧭 `so_recorder.py`
+🧾 Záznamník manuálních kliků – otevře přihlášený prohlížeč a uloží všechny HTTP požadavky do JSON (pro pozdější reverse-engineering a psaní skriptů).
+
 ⚠️ **.env** soubor
 Aby bylo možné příhlásit se do `skolaonline.cz` z automatizovaného prohlížeče, je nutné mít ve složce vytvořený soubor `.env` (viz instalace)
 
@@ -52,6 +58,7 @@ SO_PASS=<vase-heslo-pro-skoluonline>
 $ ./install
 $ source bin/activate
 ```
+(`install` nainstaluje i `requests-toolbelt`, kterou používá `so_soap.py` pro multipart/form-data volání.)
 ### 3️⃣ Spuštění skriptů
 📡 Sledování složky a zpracování XML:
 ```bash
@@ -60,6 +67,18 @@ $ (virt-env) ./suplovani.py # Zapne monitorování složky
 🌍 Stažení suplování pro konkrétní datum:
 ```bash
 $ (virt-env) ./so_download.py --date "25.2.2025" --headless --clear --exclude=3A,1C # Stáhne data k požadovaného datu
+```
+
+🌍 Rychlejší stažení suplování bez prohlížeče:
+```bash
+$ (virt-env) ./so_soap.py --date "25.2.2025" --clear --exclude=3A,1C
+```
+(`so_soap.py` sdílí stejné volby `--include/--exclude/--clear` a ukládá výstupy se stejným názvem jako Selenium varianta.)
+
+🧾 Záznam manuální práce v prohlížeči (uloží JSON s požadavky):
+```bash
+$ (virt-env) ./so_recorder.py --output network_log.json --start-url "<libovolná stránka SkolaOnline>"
+# provádějte akce v okně, pak v terminálu stiskněte Enter a log se uloží
 ```
 
 ##💡 **Tipy & Vylepšení** 

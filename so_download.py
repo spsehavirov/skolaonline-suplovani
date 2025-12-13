@@ -43,6 +43,7 @@ import sys
 import os
 import shutil
 import argparse
+import time
 
 from datetime import datetime
 
@@ -172,19 +173,22 @@ class RecorderTest(BaseCase):
         #   This part moves the downloaded file into the desired folder
         #    as the SeleniumBase {PyTest} doesn't really like changing
         #    the default folder.
-        self.sleep(5)
         download_dir = self.get_downloads_folder()
+        os.makedirs(download_dir, exist_ok=True)
         print(Fore.YELLOW + "Download directory: " + download_dir)
 
-        # Look for an XML file in that folder
-        files = os.listdir(download_dir)
-        xml_files = [f for f in files if f.lower().endswith(".xml")]
+        xml_file = None
+        try:
+            xml_file = self._wait_for_xml_download(download_dir)
+        except TimeoutError as exc:
+            print(Fore.RED + str(exc))
+        except FileNotFoundError:
+            print(Fore.YELLOW + "Selenium did not recreate the download folder.")
 
         with open(CONFIG, "r", encoding="utf-8") as conf_file:
             conf = yaml.safe_load(conf_file)
 
-        if xml_files:
-            xml_file = os.path.join(download_dir, xml_files[0])
+        if xml_file:
             print(Fore.MAGENTA + "Downloaded XML file: " + xml_file)
             # Option 2: Copy the file to a different location (e.g., current working directory)
             datestamp = datetime.strptime(self.custom_date, "%d.%m.%Y").strftime(
@@ -201,6 +205,52 @@ class RecorderTest(BaseCase):
             print(Fore.YELLOW + "No XML file was downloaded.")
 
         unset_key(dotenv_path, "DATE_TO_PROCESS")
+
+    def _wait_for_xml_download(self, download_dir, timeout=60):
+        """Polls the SeleniumBase downloads folder until a finalized XML appears."""
+        deadline = time.time() + timeout
+        last_file = None
+        last_size = -1
+        stable_reads = 0
+
+        while time.time() < deadline:
+            os.makedirs(download_dir, exist_ok=True)
+            try:
+                files = os.listdir(download_dir)
+            except FileNotFoundError:
+                files = []
+
+            xml_files = [
+                os.path.join(download_dir, f)
+                for f in files
+                if f.lower().endswith(".xml")
+            ]
+            cr_files = [
+                f for f in files if f.lower().endswith(".crdownload")
+            ]
+
+            if xml_files:
+                xml_files.sort(key=os.path.getmtime, reverse=True)
+                newest = xml_files[0]
+                try:
+                    size = os.path.getsize(newest)
+                except FileNotFoundError:
+                    time.sleep(0.5)
+                    continue
+                if newest == last_file and size == last_size and not cr_files:
+                    stable_reads += 1
+                    if stable_reads >= 2:
+                        return newest
+                else:
+                    last_file = newest
+                    last_size = size
+                    stable_reads = 0
+
+            time.sleep(1)
+
+        raise TimeoutError(
+            f"XML download did not complete within {timeout} seconds."
+        )
 
 
 # To run the test from the command line:
