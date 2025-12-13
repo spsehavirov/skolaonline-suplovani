@@ -214,6 +214,9 @@ def _update_config_from_args(args: argparse.Namespace) -> dict:
         exclude_list = [item.strip().upper() for item in args.exclude.split(",")]
         config["settings"]["exclude"].extend(exclude_list)
 
+    if args.day_end_hour is not None:
+        config["settings"]["day_end_hour"] = int(args.day_end_hour)
+
     with open(CONFIG, "w", encoding="utf-8") as config_file:
         yaml.safe_dump(config, config_file, default_flow_style=False, allow_unicode=True)
 
@@ -233,6 +236,12 @@ def main() -> None:
         "--clear",
         help="Clear include/exclude lists before adding new values",
         action="store_true",
+    )
+    parser.add_argument(
+        "--day-end-hour",
+        help="Only include substitutions up to this school period (e.g. 4).",
+        type=int,
+        default=None,
     )
     args = parser.parse_args()
 

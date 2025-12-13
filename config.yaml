@@ -1,5 +1,6 @@
 settings:
   check_interval: 2
+  day_end_hour: 3
   exclude: []
   include: []
   output:

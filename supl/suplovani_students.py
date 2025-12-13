@@ -437,6 +437,9 @@ class SuplovaniZaci(SuplovaniBase):
         """
         absences = self.extract_absences()
         raw_substitutions = self.extract_substitutions()
+        raw_substitutions = self.filter_records_by_end_period(
+            raw_substitutions, period_key="Period"
+        )
         substitutions = self.extract_final_substitutions2(raw_substitutions)
 
         self._cleanup(output_format)  # CLEANUP the previous versions

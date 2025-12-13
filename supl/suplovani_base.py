@@ -23,6 +23,7 @@ Dependencies:
 
 import xml.etree.ElementTree as ET
 from datetime import datetime
+import re
 
 from .settings import Settings
 
@@ -136,6 +137,95 @@ class SuplovaniBase:
                 periods[period_id_text] = period_name  # Store updated period name
 
         return periods
+
+    def day_end_period(self):
+        """
+        Optional config for filtering records to the given last school period.
+
+        Supported config keys (under `settings:` in config.yaml):
+        - `day_end_period`
+        - `day_end_hour` (alias)
+
+        Returns:
+            int | None: Last period to include, or None if not configured.
+        """
+        raw = self.settings.get("day_end_period", None)
+        if raw is None:
+            raw = self.settings.get("day_end_hour", None)
+
+        if raw is None:
+            return None
+
+        if isinstance(raw, int):
+            return raw if raw > 0 else None
+
+        if isinstance(raw, str):
+            raw = raw.strip()
+            if not raw:
+                return None
+            if raw.isdigit():
+                value = int(raw)
+                return value if value > 0 else None
+
+        return None
+
+    @staticmethod
+    def _parse_period_range(period_text: str):
+        """
+        Parse a period label into (start, end) numbers.
+        Accepts values like "3", "3-4", "2nd", "1. hod", "celý den".
+        """
+        if not period_text:
+            return None
+
+        normalized = period_text.strip().lower()
+        if not normalized:
+            return None
+
+        if "cel" in normalized and "den" in normalized:
+            return (1, 99)
+
+        nums = [int(n) for n in re.findall(r"\d+", normalized)]
+        if not nums:
+            return None
+
+        if len(nums) == 1:
+            return (nums[0], nums[0])
+
+        start, end = nums[0], nums[1]
+        return (min(start, end), max(start, end))
+
+    def filter_records_by_end_period(self, records, period_key="Period"):
+        """
+        Filters records based on configured `day_end_period` / `day_end_hour`.
+
+        Records with period ranges that extend past the end period are kept,
+        but the `Period` label is clamped for display (e.g. "4-7" -> "4-5").
+        """
+        end_period = self.day_end_period()
+        if not end_period:
+            return records
+
+        filtered = []
+        for rec in records:
+            period_text = rec.get(period_key, "")
+            parsed = self._parse_period_range(period_text)
+            if not parsed:
+                filtered.append(rec)
+                continue
+
+            start, end = parsed
+            if start > end_period:
+                continue
+
+            if end > end_period:
+                rec = dict(rec)
+                rec[period_key] = (
+                    str(start) if start == end_period else f"{start}-{end_period}"
+                )
+            filtered.append(rec)
+
+        return filtered
 
     def generate(self, output_format):
         """Generate the output in the specified format (CSV, HTML, PDF)."""

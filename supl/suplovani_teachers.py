@@ -298,6 +298,9 @@ class SuplovaniUcitele(SuplovaniBase):
 
         absences = self.extract_absences()
         substitutions = self.extract_substitutions()
+        substitutions = self.filter_records_by_end_period(
+            substitutions, period_key="Period"
+        )
 
         timestamp = self.date.strftime("%Y_%m_%d")
 

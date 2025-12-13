@@ -17,6 +17,7 @@ Tato sada skriptů vznikla z potřeby přizpůsobit export dat z ŠkolaOnline pr
 - ✅ Zpracovávat XML do CSV, HTML a PDF a png (číslované po stránkách)
 - ✅ Barvení záhlaví dle dne v týdnu
 - ✅ Filtrovat zobrazení pro vynechání tříd nebo naopak zahrnutí jen jich do výpisu
+- ✅ Filtrovat výpis jen do určité hodiny (konec dne)
 
 - 🚧 Volba šablony, pro stažení (aktuálně je natvrdo naše školní)
 - 🚧 Najít jak obejít ŠO formulář a poslat data napřímo tak, abychom hned dostali výsledek (HTTPS POST místo Selenium)
@@ -71,9 +72,10 @@ $ (virt-env) ./so_download.py --date "25.2.2025" --headless --clear --exclude=3A
 
 🌍 Rychlejší stažení suplování bez prohlížeče:
 ```bash
-$ (virt-env) ./so_soap.py --date "25.2.2025" --clear --exclude=3A,1C
+$ (virt-env) ./so_soap.py --date "25.2.2025" --clear --exclude=3A,1C --day-end-hour 4
 ```
 (`so_soap.py` sdílí stejné volby `--include/--exclude/--clear` a ukládá výstupy se stejným názvem jako Selenium varianta.)
+(`--day-end-hour` nastaví `settings.day_end_hour` v `config.yaml` a omezí výpis suplování jen do zadané hodiny.)
 
 🧾 Záznam manuální práce v prohlížeči (uloží JSON s požadavky):
 ```bash
