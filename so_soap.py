@@ -89,10 +89,10 @@ def _login(session: requests.Session) -> None:
         raise DownloadError("Login failed; check credentials or site availability.")
 
 
-def _fetch_form_state(session: requests.Session) -> Tuple[str, str, str, str]:
+def _fetch_form_state(session: requests.Session) -> Tuple[str, str, str]:
     """
     Load the filter page and return
-    (viewstate_session_key, filtrgrid, current_date, row_datakey).
+    (viewstate_session_key, current_date, row_datakey).
     The server stores the heavy viewstate on its side and references it via the key.
     """
     resp = session.get(FILTER_URL, timeout=20)
@@ -100,35 +100,34 @@ def _fetch_form_state(session: requests.Session) -> Tuple[str, str, str, str]:
     soup = BeautifulSoup(resp.text, "html.parser")
 
     viewstate_el = soup.find("input", {"name": "__VIEWSTATE_SESSION_KEY"})
-    filtr_grid_el = soup.find("input", {"name": "FiltrGrid"})
     date_el = soup.find("input", {"id": "wdcDatum_input"})
     row = soup.find("tr", {"id": "FiltrGrid_r_0"})
 
     viewstate_session_key = viewstate_el.get("value", "") if viewstate_el else ""
-    filtr_grid = filtr_grid_el.get("value", "") if filtr_grid_el else ""
     current_date = date_el.get("value", "") if date_el else ""
     row_datakey = row.get("datakey", "") if row else ""
 
     if not viewstate_session_key or not current_date or not row_datakey:
         raise DownloadError("Failed to extract form tokens from the filter page.")
 
-    return viewstate_session_key, filtr_grid, current_date, row_datakey
+    return viewstate_session_key, current_date, row_datakey
 
 
 def _download_xml(session: requests.Session, date_value: str) -> bytes:
     """
     Trigger the export button via POST and return the XML payload as bytes.
     """
-    viewstate_session_key, filtr_grid, page_date, row_datakey = _fetch_form_state(
-        session
-    )
+    viewstate_session_key, page_date, row_datakey = _fetch_form_state(session)
+
+    page_date_dt = datetime.strptime(page_date, "%d.%m.%Y")
 
     # Replicates the client-side grid state that stores the date filter.
     layout_xml = (
         "<DisplayLayout>"
         "<StateChanges>"
         f'<StateChange Type="ActiveCell" Level="0_3" DataKey="{row_datakey}"></StateChange>'
-        f'<StateChange Type="ChangedCells" Value="{date_value}" Level="0_3" DataKey="{row_datakey}"></StateChange>'
+        f'<StateChange Type="ChangedCells" Value="{date_value}" Level="0_3" '
+        f'DataKey="{row_datakey}"></StateChange>'
         "</StateChanges>"
         "</DisplayLayout>"
     )
@@ -136,11 +135,11 @@ def _download_xml(session: requests.Session, date_value: str) -> bytes:
 
     # Date chooser hidden value wants the XML snippet already URL-encoded.
     encoded_date_hidden = requests.utils.quote(
-        f'<DateChooser Value="{datetime.strptime(page_date, "%d.%m.%Y").strftime("%Yx%mx%d")}"></DateChooser>',
+        f'<DateChooser Value="{page_date_dt.strftime("%Yx%mx%d")}"></DateChooser>',
         safe="",
     )
     dp_cal_value = requests.utils.quote(
-        f'<x PostData="{datetime.strptime(page_date, "%d.%m.%Y").strftime("%Yx%mx-1x-1x-1")}"></x>',
+        f'<x PostData="{page_date_dt.strftime("%Yx%mx-1x-1x-1")}"></x>',
         safe="",
     )
 
@@ -218,12 +217,15 @@ def _update_config_from_args(args: argparse.Namespace) -> dict:
         config["settings"]["day_end_hour"] = int(args.day_end_hour)
 
     with open(CONFIG, "w", encoding="utf-8") as config_file:
-        yaml.safe_dump(config, config_file, default_flow_style=False, allow_unicode=True)
+        yaml.safe_dump(
+            config, config_file, default_flow_style=False, allow_unicode=True
+        )
 
     return config
 
 
 def main() -> None:
+    """Download substitution XML via direct HTTP requests (no Selenium)."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", help='Date to download (e.g. "25.02.2025").')
     parser.add_argument(
