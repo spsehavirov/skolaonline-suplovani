@@ -113,6 +113,7 @@ def collect_requests(perf_logs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 def save_log(events: List[Dict[str, Any]], output_path: Path) -> None:
+    """Write captured network request events to a JSON file."""
     data = {
         "exported_at": datetime.utcnow().isoformat() + "Z",
         "count": len(events),
@@ -124,6 +125,7 @@ def save_log(events: List[Dict[str, Any]], output_path: Path) -> None:
 
 
 def main() -> None:
+    """Launch a logged-in Chrome session and save captured SkolaOnline requests."""
     dotenv_path = find_dotenv()
     load_dotenv(dotenv_path)
     username = os.getenv("SO_USER")
@@ -159,7 +161,8 @@ def main() -> None:
         print(Fore.GREEN + "Logged in. Perform your actions now.")
         print(
             Fore.YELLOW
-            + f"When finished, return to this terminal and press Enter to save logs to {output_path}"
+            + "When finished, return to this terminal and press Enter to save logs to "
+            f"{output_path}"
         )
         input()  # Wait for user to finish manual interactions
 
