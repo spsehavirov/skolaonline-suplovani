@@ -1,5 +1,5 @@
 backports.tarfile==1.2.0
-brotli==1.1.0
+brotli==1.2.0
 bs4==0.0.2
 defusedxml==0.7.1
 importlib-metadata==8.0.0
