@@ -14,6 +14,8 @@ Credentials are loaded from `.env` (`SO_USER`, `SO_PASS`). The output filename
 matches the Selenium variant: `so_suplovani_students-YYYY-MM-DD.xml`.
 """
 
+# pylint: disable=duplicate-code
+
 from __future__ import annotations
 
 import argparse

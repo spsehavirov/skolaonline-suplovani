@@ -39,6 +39,8 @@ Notes:
 - The SeleniumBase test is executed as a pytest-compatible test case.
 """
 
+# pylint: disable=duplicate-code
+
 import sys
 import os
 import shutil
