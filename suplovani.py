@@ -148,6 +148,7 @@ def monitor_folder():
 
 
 def build_parser():
+    """Build and return the CLI argument parser."""
     parser = argparse.ArgumentParser(
         description=(
             "Monitor a folder for SkolaOnline XML substitutions and generate outputs."
