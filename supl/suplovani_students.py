@@ -111,12 +111,21 @@ class SuplovaniZaci(SuplovaniBase):
         }
 
     def _extract_event_group_mappings(self):
-        return {
-            event.find("UDALOST_ID").text: event.find("SKUPINA_ID").text
-            for event in self.root.findall(".//UdalostStudijniSkupina")
-            if event.find("UDALOST_ID") is not None
-            and event.find("SKUPINA_ID") is not None
-        }
+        mappings = {}
+        for event in self.root.findall(".//UdalostStudijniSkupina"):
+            event_id = (
+                event.find("UDALOST_ID").text
+                if event.find("UDALOST_ID") is not None
+                else ""
+            )
+            group_id = (
+                event.find("SKUPINA_ID").text
+                if event.find("SKUPINA_ID") is not None
+                else ""
+            )
+            if event_id and group_id:
+                mappings.setdefault(event_id, []).append(group_id)
+        return mappings
 
     def _extract_event_room_mappings(self):
         mappings = {}
@@ -231,13 +240,21 @@ class SuplovaniZaci(SuplovaniBase):
         substitutions = []
         for record in self.root.findall(".//VypisSuplovaniZaka"):
             event_id = super().get(record, "UDALOST_ID")
-            group_id = self.event_group_mapping.get(event_id, "")
+            group_ids = self.event_group_mapping.get(event_id, [])
 
-            class_name = self.group_mapping.get(group_id, {}).get("class", "")
-            group_name = self.group_mapping.get(group_id, {}).get("group", "")
+            class_name = ""
+            group_names = []
+            for group_id in group_ids:
+                class_name = self.group_mapping.get(group_id, {}).get("class", "")
+                group_name = self.group_mapping.get(group_id, {}).get("group", "")
+                if group_name and group_name != class_name:
+                    group_names.append(group_name)
 
-            if group_name == class_name:
-                group_name = ""
+            seen = set()
+            group_names = [
+                name for name in group_names if not (name in seen or seen.add(name))
+            ]
+            group_name = group_names
 
             period = self.period_mapping.get(super().get(record, "OBDOBI_DNE_ID"), "")
 
@@ -299,6 +316,35 @@ class SuplovaniZaci(SuplovaniBase):
                 )
         return substitutions
 
+    @staticmethod
+    def _group_key(group):
+        if isinstance(group, (list, tuple)):
+            return tuple(group)
+        if group is None:
+            return ()
+        if isinstance(group, str):
+            trimmed = group.strip()
+            return (trimmed,) if trimmed else ()
+        return (str(group),)
+
+    @staticmethod
+    def _group_is_empty(group):
+        if isinstance(group, (list, tuple)):
+            return len(group) == 0
+        if group is None:
+            return True
+        if isinstance(group, str):
+            return group.strip() == ""
+        return False
+
+    @staticmethod
+    def _group_to_csv(group):
+        if isinstance(group, (list, tuple)):
+            return ", ".join(group)
+        if group is None:
+            return ""
+        return str(group)
+
     def extract_final_substitutions(self, records):
         """
         Iteratively processes a list of substitution records (each a dict with keys "Class",
@@ -311,7 +357,11 @@ class SuplovaniZaci(SuplovaniBase):
 
         for rec in records:
             # Define the key. If the class is divided into groups, make sure "Group" is not empty.
-            key = (rec.get("Class", ""), rec.get("Period", ""), rec.get("Group", ""))
+            key = (
+                rec.get("Class", ""),
+                rec.get("Period", ""),
+                self._group_key(rec.get("Group", "")),
+            )
             current_is_sub = rec.get("Resolution", "").strip() != "odpadá"
 
             if key not in final_records:
@@ -361,11 +411,9 @@ class SuplovaniZaci(SuplovaniBase):
             general_cancel = None
             subgroup_records = []
             for r in recs:
-                group, resolution = (
-                    r.get("Group", "").strip(),
-                    r.get("Resolution", "").strip(),
-                )
-                if group == "" and resolution == "odpadá":
+                group = r.get("Group", "")
+                resolution = r.get("Resolution", "").strip()
+                if self._group_is_empty(group) and resolution == "odpadá":
                     general_cancel = r
                 else:
                     subgroup_records.append(r)
@@ -414,7 +462,7 @@ class SuplovaniZaci(SuplovaniBase):
         }
 
         return (
-            f"supl_{self.date.strftime('%y-%m-%d')}_{day_names.get(day_of_week, "x")}"
+            f"supl_{self.date.strftime('%y-%m-%d')}_{day_names.get(day_of_week, 'x')}"
         )
 
     def _cleanup(self, extension):
@@ -446,7 +494,12 @@ class SuplovaniZaci(SuplovaniBase):
 
         if output_format == "csv":
             export_to = f"{self._path}/{self._export_filename_prefix()}.csv"
-            pd.DataFrame(raw_substitutions).to_csv(export_to, index=False, sep=";")
+            csv_substitutions = []
+            for rec in raw_substitutions:
+                csv_rec = dict(rec)
+                csv_rec["Group"] = self._group_to_csv(rec.get("Group", ""))
+                csv_substitutions.append(csv_rec)
+            pd.DataFrame(csv_substitutions).to_csv(export_to, index=False, sep=";")
             return "CSV file generated."
 
         if output_format == "html":

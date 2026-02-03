@@ -40,6 +40,12 @@
             font-weight: 600;
             text-transform: uppercase;
         }
+        .group-cell {
+            font-size: 0.9rem;
+            line-height: 1.1;
+            white-space: nowrap;
+            word-break: keep-all;
+        }
     </style>
 </head>
 <body>
@@ -75,7 +81,7 @@
                     {% endif %}
                     <td>{{ sub.Period }}</td>
                     <td class="subject">{{ sub.Subject }}</td>
-                    <td>{{ sub.Group }}</td>
+                    <td class="group-cell">{{ sub.Group | join('<br/>') | safe }}</td>
                     <td>{{ sub.Room }}</td>
                     <td style="text-transform: uppercase;"><b>{{ sub.Teacher_Abbreviation }}</b></td><!-- [{{ sub.Teacher }} ]  -->
                     <td>{{ sub.Resolution }}</td>

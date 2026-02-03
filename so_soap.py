@@ -34,9 +34,13 @@ from requests_toolbelt import MultipartEncoder
 LOGIN_URL = "https://aplikace.skolaonline.cz/SOL/Prihlaseni.aspx"
 FILTER_URL = (
     "https://aplikace.skolaonline.cz/SOL/App/TiskoveSestavy/KTS004_Filtr.aspx"
-    "?SestavaID=532a6c6e-f76a-46ab-9e5a-236b628da333"
-    "&ReturnPage=/SOL/App/TiskoveSestavy/KTS003_SeznamSestav.aspx"
-    "?SlozkaID=00000000-0000-0000-0000-000000000000&page=1"
+    "?SestavaID="
+        "84ad1259-cfd8-417a-ab4e-7287846a6873"
+    "&ReturnPage="
+        "/SOL/App/TiskoveSestavy/KTS003_SeznamSestav.aspx"
+    "?SlozkaID="
+        "00000000-0000-0000-0000-000000000000"
+    "&page=1"
 )
 CONFIG = "config.yaml"
 

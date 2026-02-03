@@ -2,9 +2,9 @@
 """
 Automated XML Processing for Teacher and Student Substitutions.
 
-This script monitors a specified folder for XML files containing substitution 
-data from SkolaOnline.cz. It detects whether the XML file contains data for 
-students or teachers and processes it accordingly by generating reports 
+This script monitors a specified folder for XML files containing substitution
+data from SkolaOnline.cz. It detects whether the XML file contains data for
+students or teachers and processes it accordingly by generating reports
 in CSV, HTML, PDF, and PNG formats.
 
 Features:
@@ -50,6 +50,7 @@ Example config.yaml:
 
 # pylint: disable=R0801
 
+import argparse
 import os
 import time
 import shutil
@@ -71,6 +72,7 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 # Enable colored terminal output
 init(autoreset=True)
+
 
 def detect_suplovani_type(xml_file):
     """
@@ -142,11 +144,21 @@ def monitor_folder():
                 print(Fore.GREEN + f"📂 New XML detected: {file}")
                 process_suplovani(file_path)
 
-        processed_files = current_files
+    processed_files = current_files
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description=(
+            "Monitor a folder for SkolaOnline XML substitutions and generate outputs."
+        )
+    )
+    return parser
 
 
 if __name__ == "__main__":
     try:
+        build_parser().parse_known_args()
         print(Fore.MAGENTA + f"🔍 Monitoring folder: {WATCH_FOLDER}")
         process_existing_files()
         monitor_folder()
