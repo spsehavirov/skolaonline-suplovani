@@ -1,5 +1,10 @@
 # OpenSpec Features - SkolaOnline Suplování Modernisation
 
+> Historical planning draft, not a description of the current implementation.
+> The installer currently targets Python 3.13; CI checks Python 3.12 and 3.13.
+> Migration to Python 3.14 is deferred. Use the [README](README.md) and its linked
+> guides for current installation and usage instructions.
+
 **Project:** SkolaOnline Suplování
 **Version:** 2.0.0
 **Date:** January 2026
