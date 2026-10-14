@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Lightweight downloader for ŠkolaOnline substitution XML without Selenium.
 
@@ -18,17 +18,25 @@ matches the Selenium variant: `so_suplovani_students-YYYY-MM-DD.xml`.
 
 from __future__ import annotations
 
+from project_env import run_in_project_venv
+
+if __name__ == "__main__":
+    run_in_project_venv(__file__)
+
 import argparse
 import os
 from datetime import datetime
 from typing import Optional, Tuple
+from xml.etree.ElementTree import ParseError
 
 import requests
 import yaml
 from bs4 import BeautifulSoup
 from colorama import Fore, init
-from dotenv import find_dotenv, load_dotenv, set_key, unset_key
+from dotenv import find_dotenv, load_dotenv
 from requests_toolbelt import MultipartEncoder
+from supl.filters import add_filter_arguments, build_policy, parse_date
+from supl.jobs import prepare_download, publish_xml
 
 # Constants used by the SkolaOnline form flow
 LOGIN_URL = "https://aplikace.skolaonline.cz/SOL/Prihlaseni.aspx"
@@ -65,17 +73,7 @@ def _parse_date(date_str: Optional[str]) -> datetime:
     Parse the user-provided date into a datetime.date.
     Accepts common dot and dash separated formats used in the repo.
     """
-    if not date_str:
-        return datetime.today()
-
-    candidates = ["%d.%m.%Y", "%d.%m.%y", "%Y-%m-%d"]
-    for fmt in candidates:
-        try:
-            return datetime.strptime(date_str, fmt)
-        except ValueError:
-            continue
-
-    raise ValueError(f"Unsupported date format: {date_str}")
+    return datetime.combine(parse_date(date_str), datetime.min.time())
 
 
 def _ensure_credentials() -> None:
@@ -179,103 +177,45 @@ def _download_xml(session: requests.Session, date_value: str) -> bytes:
     return resp.content
 
 
-def _save_xml(content: bytes, date_obj: datetime, config: dict) -> str:
+def _save_xml(content: bytes, date_obj: datetime, config: dict, policy=None) -> str:
     """Persist the downloaded XML into the configured watch folder."""
-    datestamp = date_obj.strftime("%Y-%m-%d")
-    watch_folder = config["settings"].get("watch_folder", "./watch")
-    os.makedirs(watch_folder, exist_ok=True)
-    destination = os.path.join(
-        os.getcwd(), f"{watch_folder}/so_suplovani_students-{datestamp}.xml"
-    )
-    with open(destination, "wb") as xml_file:
-        xml_file.write(content)
-    return destination
+    report_date = date_obj.date()
+    if policy is None:
+        policy = build_policy(config["settings"], report_date)
+    return publish_xml(content, report_date, config, policy)
 
 
-def _update_config_from_args(args: argparse.Namespace) -> dict:
-    """Keep include/exclude behavior consistent with the Selenium script."""
-    if os.path.exists(CONFIG):
-        with open(CONFIG, "r", encoding="utf-8") as config_file:
-            config = yaml.safe_load(config_file)
-    else:
-        config = {"settings": {}, "include": [], "exclude": []}
-
-    config.setdefault("settings", {})
-    config["settings"].setdefault("exclude", [])
-    config["settings"].setdefault("include", [])
-
-    if args.clear:
-        print(Fore.YELLOW + "Cleared all include/exclude rules")
-        config["settings"]["exclude"] = []
-        config["settings"]["include"] = []
-
-    if args.include:
-        print(Fore.GREEN + f"Include: {args.include}")
-        include_list = [item.strip().upper() for item in args.include.split(",")]
-        config["settings"]["include"].extend(include_list)
-
-    if args.exclude:
-        print(Fore.RED + f"Exclude: {args.exclude}")
-        exclude_list = [item.strip().upper() for item in args.exclude.split(",")]
-        config["settings"]["exclude"].extend(exclude_list)
-
-    if args.day_end_hour is not None:
-        config["settings"]["day_end_hour"] = int(args.day_end_hour)
-
-    with open(CONFIG, "w", encoding="utf-8") as config_file:
-        yaml.safe_dump(
-            config, config_file, default_flow_style=False, allow_unicode=True
-        )
-
-    return config
-
-
-def main() -> None:
-    """Download substitution XML via direct HTTP requests (no Selenium)."""
+def build_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", help='Date to download (e.g. "25.02.2025").')
-    parser.add_argument(
-        "--include", help="Comma-separated list of items to include", default=None
-    )
-    parser.add_argument(
-        "--exclude", help="Comma-separated list of items to exclude", default=None
-    )
-    parser.add_argument(
-        "--clear",
-        help="Clear include/exclude lists before adding new values",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--day-end-hour",
-        help="Only include substitutions up to this school period (e.g. 4).",
-        type=int,
-        default=None,
-    )
+    add_filter_arguments(parser)
+    return parser
+
+
+def main():
+    """Download substitution XML without changing saved rules or .env."""
+    parser = build_parser()
     args = parser.parse_args()
-
     custom_date = args.date or os.getenv("DATE_TO_PROCESS")
-    if custom_date:
-        print("Custom date to process:", Fore.CYAN + custom_date)
-        set_key(dotenv_path, "DATE_TO_PROCESS", custom_date)
-
-    config = _update_config_from_args(args)
-
-    # Prepare date formatting
-    date_obj = _parse_date(custom_date)
-    date_for_form = date_obj.strftime("%d.%m.%Y")
+    try:
+        config, report_date, policy = prepare_download(CONFIG, custom_date, args)
+    except (ValueError, OSError, yaml.YAMLError) as exc:
+        parser.error(str(exc))
+    date_obj = datetime.combine(report_date, datetime.min.time())
+    date_for_form = report_date.strftime("%d.%m.%Y")
 
     try:
         _ensure_credentials()
         with requests.Session() as session:
             _login(session)
             xml_content = _download_xml(session, date_for_form)
-        saved_path = _save_xml(xml_content, date_obj, config)
+        saved_path = _save_xml(xml_content, date_obj, config, policy)
         print(Fore.GREEN + f"XML file saved to: {saved_path}")
-    except (requests.RequestException, DownloadError, ValueError) as exc:
+    except (requests.RequestException, DownloadError, ValueError, OSError, ParseError) as exc:
         print(Fore.RED + f"Download failed: {exc}")
-    finally:
-        unset_key(dotenv_path, "DATE_TO_PROCESS")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

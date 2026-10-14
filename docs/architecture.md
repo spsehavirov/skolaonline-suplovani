@@ -37,14 +37,16 @@
 - Group handling: empty `Group` denotes full class; non-empty means subgroup/track; impacts cancellation suppression logic.
 
 ## Runtime Flow (current)
-1) `suplovani.py` loads `config.yaml` via `Settings` and resolves `watch_folder`, `output_folder`, formats, include/exclude rules, and optional day-end limit.
+1) `suplovani.py` loads `config.yaml` via `Settings` and resolves the watch directory and polling interval.
 2) Watches `watch_folder`; on a new `*.xml`, detect type (`VypisSuplovaniZaka` → students, `VypisSuplovani` → teachers).
-3) Instantiate the matching processor (`SuplovaniZaci` or `SuplovaniUcitele`), set export path, and call `generate` for each configured format.
-4) Generated files go to `output_folder`; the XML is moved to `watch/processed`.
+3) Read a fresh configuration snapshot and validate `<XML>.filters.json` if present. Otherwise build the policy from saved settings for the date inside the XML. Instantiate the matching processor with stable job settings, set export path, and call `generate` for each configured format.
+4) Generated files go to `output_folder`; XML and filter metadata are archived together in `watch/processed`. Repeated archives retain the original pair's names in a unique subdirectory.
 
 ## Components
 - Entry/watcher: `suplovani.py` orchestrates watch, detect, process, move.
 - Config: `config.yaml` + `supl/settings.py` (`Settings`) read YAML, expose getters, include/exclude, `day_end_hour`/`day_end_period`.
+- Filter policy: `supl/filters.py` parses the shared CLI and saved dated rules, combines constraints, and splits partially excluded period ranges. Policies and per-job settings remain stable across export formats.
+- Job handoff: `supl/jobs.py` publishes complete metadata before complete XML using exclusive hard links within the watched filesystem; pending pairs cannot be overwritten. Metadata contains schema version 1, XML basename, ISO report date, and the resolved policy. Validation precedes export cleanup.
 - Base processor: `supl/suplovani_base.py` parses XML, extracts mappings (subjects, rooms, periods), date, includes/excludes, clamps periods beyond end-of-day, and provides helpers.
 - Student processor: `supl/suplovani_students.py`
   - Extracts teacher/class/group/event-room/event-teacher mappings.
@@ -56,8 +58,8 @@
   - Extracts teacher absences and substitutions; simpler flow, no cancel/sub merge; renders `templates/teachers.html`.
 - Hours helper: `supl/hours.py` maps ISO timestamps to period ranges for absence/substitution time windows.
 - Downloaders:
-  - `so_download.py`: SeleniumBase browser automation; uses `.env` creds; optional date/include/exclude/day-end flags; drops XML into watch folder.
-  - `so_soap.py`: Direct HTTP form/post downloader (no browser) with the same flags and filename pattern.
+  - `so_download.py`: SeleniumBase browser automation; uses `.env` creds; passes the per-run date, watch directory and resolved policy into its pytest subprocess through a temporary process environment variable; publishes the downloaded XML and metadata.
+  - `so_soap.py`: Direct HTTP form/post downloader (no browser) with the same filter flags, publication and filename pattern. Neither downloader writes filter arguments into config or `.env`.
   - `so_recorder.py`: Opens logged-in browser and records network traffic to JSON for reverse-engineering.
 - Templates: `templates/students.html` and `templates/teachers.html`; inline CSS, Jinja2 templating.
 
@@ -71,7 +73,7 @@
    - Resolve `Teacher/Abbrev` list from `UdalostOsoba` → `OSOBA_ID` → teacher map.
    - Capture `Resolution`, `Note`.
    - Apply include/exclude on `Class`; drop if not allowed.
-3) Apply day-end filter: drop records starting after configured end; clamp ranges crossing the limit.
+3) Apply the dated student window, legacy day-end limit and matching global/class/year skips. Intersect windows, subtract skips, and emit remaining contiguous ranges before merging.
 4) Cancellation/substitution merge (`extract_final_substitutions2`):
    - Group by `(Class, Period)`.
    - Identify general cancellation (`Group == ""` and `Resolution == "odpadá"`).
@@ -93,8 +95,10 @@
 
 ## Data & Business Rules
 - Data model (current): plain dicts for records; mappings keyed by IDs from XML.
-- Include/exclude: For students, include list wins if present; otherwise exclude list filters by class name.
+- Include/exclude: Student class names are compared case-insensitively. A nonempty include list restricts eligible classes; exclude always removes a class, even if included. Saved and CLI lists are combined by union.
 - Day-end filter: `day_end_period`/`day_end_hour` drops records starting after the limit; clamps ranges that overrun the limit.
+- Dated student filters: `student_filters_by_date["YYYY-MM-DD"]` contains optional `hours` and `skip` values. `--hours` intersects with the saved window; repeated `--skip` arguments add omissions. `--no-config` ignores saved filters but retains operational settings; `--clear` ignores only saved include/exclude. Arguments apply only to their XML. New student filters do not alter teacher reports or absence summaries.
+- Full-day labels are bounded by the school schedule and numeric XML period mappings. Unknown period labels are retained with a warning when a matching hour filter is active.
 - Cancellation merge (students): General cancellation (Group empty, Resolution == "odpadá") is dropped when any non-odpadá exists for the same class+period, regardless of group. This can hide valid “odpadá” entries if another record exists—known behaviour to revisit.
 - Absence filtering: Skips certain staff abbreviations from absences list.
 
@@ -107,12 +111,12 @@
 - Downloaders: seleniumbase, requests-toolbelt (for SOAP variant), dotenv.
 
 ## Error Handling & Logging
-- Minimal: prints to stdout with colorama accents; limited structured errors; watcher continues on unknown XML type.
+- Prints to stdout with colorama accents. Invalid CLI rules stop before downloading; malformed/date-mismatched metadata stops before export. Failed inputs remain available, and the watcher continues with other jobs. It retries when XML, metadata or configuration changes, instead of repeatedly retrying an unchanged failed job.
 
 ## Known Gaps / Risks
 - Layout: Non-packaged script layout; relative imports; no standardized entry points.
 - Cancellation merge may suppress true cancellations when any other record exists for the class+period.
-- Limited testing and no CI/pre-commit in repo.
+- Synthetic unittest coverage of filter parsing/precedence, split ranges, date isolation, both downloader boundaries, publication/archive failures, monitor handoff and real CSV/PDF/PNG exports; no live download tests or CI/pre-commit in repo.
 - Templates tightly coupled to Jinja2; logic lives in template (groupby, sorting) rather than code-side view models.
 
 ## Modernisation Hooks (pre-analysis)

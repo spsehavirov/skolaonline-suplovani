@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Automated Selenium Test for Downloading XML Substitution Data from SkolaOnline.
 
@@ -41,19 +41,26 @@ Notes:
 
 # pylint: disable=duplicate-code
 
+from project_env import run_in_project_venv
+
+if __name__ == "__main__":
+    run_in_project_venv(__file__)
+
 import sys
 import os
-import shutil
 import argparse
+import json
+from pathlib import Path
+import subprocess
 import time
-
-from datetime import datetime
 
 import yaml
 from colorama import init, Fore
 from seleniumbase import BaseCase
 from selenium.webdriver.common.action_chains import ActionChains
-from dotenv import load_dotenv, set_key, unset_key, find_dotenv
+from dotenv import load_dotenv, find_dotenv
+from supl.filters import FilterPolicy, add_filter_arguments, parse_date
+from supl.jobs import prepare_download, publish_xml
 
 # Load the .env file (by default, it looks in the current working directory)
 dotenv_path = find_dotenv()
@@ -64,6 +71,7 @@ so_user = os.getenv("SO_USER")
 so_pass = os.getenv("SO_PASS")
 
 CONFIG = "config.yaml"
+JOB_CONTEXT = "SO_SUPL_JOB_CONTEXT"
 
 # Init the colorama (colored output)
 init(autoreset=True)
@@ -124,15 +132,18 @@ class RecorderTest(BaseCase):
         - Selects the appropriate date for the report.
         - Initiates the XML download.
         - Moves the downloaded file to the specified folder.
-        - Unsets the `DATE_TO_PROCESS` environment variable after processing.
+        - Publishes the XML together with its per-run filter snapshot.
 
         Raises:
-            Exception: If the XML download fails or the file is not found.
+            Exception: If the XML cannot be published safely.
 
         Example:
             >>> self.test_recording()
             # Logs in, downloads, and moves the XML file.
         """
+
+        conf, report_date, policy = runtime_job()
+        self.custom_date = report_date.strftime("%d.%m.%Y")
 
         # Open the starting pages (adjust these URLs as needed)
         self.open("https://www.skolaonline.cz/prihlaseni/?")
@@ -165,10 +176,6 @@ class RecorderTest(BaseCase):
         self.highlight_click("#FiltrGrid_rc_0_3")
         self.click("td#FiltrGrid_rc_0_3")
 
-        self.custom_date = os.getenv("DATE_TO_PROCESS")
-        if self.custom_date is None:
-            self.custom_date = datetime.today().strftime("%d.%m.%Y")
-
         self.type("input#FiltrGrid_tb", self.custom_date)
         self.click("button#ExportXmlDataButton")
 
@@ -187,26 +194,13 @@ class RecorderTest(BaseCase):
         except FileNotFoundError:
             print(Fore.YELLOW + "Selenium did not recreate the download folder.")
 
-        with open(CONFIG, "r", encoding="utf-8") as conf_file:
-            conf = yaml.safe_load(conf_file)
-
         if xml_file:
             print(Fore.MAGENTA + "Downloaded XML file: " + xml_file)
-            # Option 2: Copy the file to a different location (e.g., current working directory)
-            datestamp = datetime.strptime(self.custom_date, "%d.%m.%Y").strftime(
-                "%Y-%m-%d"
-            )
-            watch_folder = conf["settings"]["watch_folder"]
-            destination = os.path.join(
-                os.getcwd(),
-                f"{watch_folder}/so_suplovani_students-{datestamp}.xml",
-            )
-            shutil.move(xml_file, destination)
+            destination = publish_xml(Path(xml_file).read_bytes(), report_date, conf, policy)
+            Path(xml_file).unlink()
             print(Fore.GREEN + "XML file copied to: " + destination)
         else:
             print(Fore.YELLOW + "No XML file was downloaded.")
-
-        unset_key(dotenv_path, "DATE_TO_PROCESS")
 
     def _wait_for_xml_download(self, download_dir, timeout=60):
         """Polls the SeleniumBase downloads folder until a finalized XML appears."""
@@ -255,78 +249,49 @@ class RecorderTest(BaseCase):
         )
 
 
-# To run the test from the command line:
-#   seleniumbase run <this_script_name.py> --headless --download-dir=<your_download_path>
-if __name__ == "__main__":
-    # Define your custom arguments
-    parser = argparse.ArgumentParser(add_help=False)
+def runtime_job():
+    """The pytest subprocess receives the parent's frozen policy via its env."""
+    context = os.getenv(JOB_CONTEXT)
+    if context is None:
+        return prepare_download(CONFIG, os.getenv("DATE_TO_PROCESS"))
+    data = json.loads(context)
+    report_date = parse_date(data["date"])
+    policy = FilterPolicy.from_dict(data["filters"])
+    return {"settings": {"watch_folder": data["watch_folder"]}}, report_date, policy
+
+
+def build_parser():
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "--date", help="Provide date for the script to get", default=None
     )
-    parser.add_argument(
-        "--include", help="Comma-separated list of items to include", default=None
-    )
-    parser.add_argument(
-        "--exclude", help="Comma-separated list of items to exclude", default=None
-    )
-    parser.add_argument(
-        "--clear",
-        help="Clear include/exclude lists before adding new values",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--day-end-hour",
-        help="Only include substitutions up to this school period (e.g. 4).",
-        type=int,
-        default=None,
-    )
+    add_filter_arguments(parser)
+    return parser
+
+
+def main():
+    parser = build_parser()
 
     # Parse known args and leave the rest for SeleniumBase/pytest
     args, remaining_args = parser.parse_known_args()
 
-    # Process your custom argument as needed
-    if args.date:
-        print("Custom date to process:", Fore.CYAN + args.date)
-        set_key(dotenv_path, "DATE_TO_PROCESS", args.date)
+    try:
+        config, report_date, policy = prepare_download(CONFIG, args.date or os.getenv("DATE_TO_PROCESS"), args)
+    except (ValueError, OSError, yaml.YAMLError) as exc:
+        parser.error(str(exc))
+    context = {"date": report_date.isoformat(), "filters": policy.to_dict(),
+               "watch_folder": config["settings"].get("watch_folder", "./watch")}
+    previous = os.environ.get(JOB_CONTEXT)
+    try:
+        os.environ[JOB_CONTEXT] = json.dumps(context)
+        # Equivalent to BaseCase.main, while preserving the subprocess exit code.
+        return subprocess.call([sys.executable, "-m", "pytest", __file__, "-s", *remaining_args])
+    finally:
+        if previous is None:
+            os.environ.pop(JOB_CONTEXT, None)
+        else:
+            os.environ[JOB_CONTEXT] = previous
 
-    if os.path.exists(CONFIG):
-        with open(CONFIG, "r", encoding="utf-8") as config_file:
-            config = yaml.safe_load(config_file)
-    else:
-        config = {"settings": {}, "include": [], "exclude": []}
 
-    # Ensure include/exclude lists exist
-    config.setdefault("settings", {})
-    config["settings"].setdefault("exclude", [])
-    config["settings"].setdefault("include", [])
-
-    # Handle --clear flag
-    if args.clear:
-        print(Fore.YELLOW + "Cleared all include/exclude rules")
-        config["settings"]["exclude"] = []
-        config["settings"]["include"] = []
-
-    # Update include/exclude lists
-    if args.include:
-        print(Fore.GREEN + f"Include: {args.include}")
-        include_list = [item.strip().upper() for item in args.include.split(",")]
-        config["settings"]["include"].extend(include_list)
-
-    if args.exclude:
-        print(Fore.RED + f"Exclude: {args.exclude}")
-        exclude_list = [item.strip().upper() for item in args.exclude.split(",")]
-        config["settings"]["exclude"].extend(exclude_list)
-
-    if args.day_end_hour is not None:
-        config["settings"]["day_end_hour"] = int(args.day_end_hour)
-
-    # Save changes to config.yaml
-    with open(CONFIG, "w", encoding="utf-8") as config_file:
-        yaml.safe_dump(
-            config, config_file, default_flow_style=False, allow_unicode=True
-        )
-
-    # Replace sys.argv with the remaining args so that BaseCase.main gets only what it expects
-    sys.argv = [sys.argv[0]] + remaining_args
-    # Now run SeleniumBase's main, which will handle the remaining command-line arguments
-    BaseCase.main(__name__, __file__)
+if __name__ == "__main__":
+    raise SystemExit(main())

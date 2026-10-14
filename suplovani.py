@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Automated XML Processing for Teacher and Student Substitutions.
 
@@ -50,25 +50,28 @@ Example config.yaml:
 
 # pylint: disable=R0801
 
+from project_env import run_in_project_venv
+
+if __name__ == "__main__":
+    run_in_project_venv(__file__)
+
 import argparse
 import os
 import time
-import shutil
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 from colorama import init, Fore
 from supl import SuplovaniUcitele, SuplovaniZaci, Settings
+from supl.jobs import archive_xml, settings_for_xml, sidecar_path
 
 # Load configuration from YAML file
 config = Settings(config_path="config.yaml", cache_ttl=10)
 
 # This config options require you to restart the monitor!
-WATCH_FOLDER = config.get("watch_folder")
-CHECK_INTERVAL = config.get("check_interval")
+WATCH_FOLDER = config.get("watch_folder", "./watch")
+CHECK_INTERVAL = config.get("check_interval", 2)
 PROCESSED_FOLDER = os.path.join(WATCH_FOLDER, "processed")
-
-# Ensure processed folder exists
-os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 # Enable colored terminal output
 init(autoreset=True)
@@ -89,6 +92,15 @@ def detect_suplovani_type(xml_file):
 
 
 def process_suplovani(xml_file):
+    """Keep failed inputs available for correction and let other jobs continue."""
+    try:
+        return _process_suplovani(xml_file)
+    except Exception as exc:  # The monitor is the boundary for independent jobs.
+        print(Fore.RED + f"Processing failed for {xml_file}: {exc}")
+        return False
+
+
+def _process_suplovani(xml_file):
     """
     Detect the type and process the XML file accordingly.
     """
@@ -96,23 +108,28 @@ def process_suplovani(xml_file):
 
     if suplovani_type is None:
         print(Fore.RED + "📂 Unknown XML, skipping ...")
-        return
+        return False
+
+    job_settings = settings_for_xml(xml_file, config)
 
     if suplovani_type == "teachers":
         print(Fore.LIGHTGREEN_EX + "📂 Detected 'TEACHERS' suplování XML")
-        supl = SuplovaniUcitele(xml_file, config)
+        supl = SuplovaniUcitele(xml_file, job_settings)
     else:
         print(Fore.GREEN + "📂 Detected 'STUDENTS' suplování XML")
-        supl = SuplovaniZaci(xml_file, config)
+        supl = SuplovaniZaci(xml_file, job_settings)
 
-    supl.export_path(config.get("output_folder", "./outputs"))
+    output_folder = job_settings.get("output_folder", "./outputs")
+    os.makedirs(output_folder, exist_ok=True)
+    supl.export_path(output_folder)
 
-    for f in config.get("output"):
+    for f in job_settings.get("output", ["csv", "html", "pdf", "png"]):
         print(Fore.YELLOW + supl.generate(f))
 
     # Move processed file
-    shutil.move(xml_file, os.path.join(PROCESSED_FOLDER, os.path.basename(xml_file)))
-    print(Fore.MAGENTA + f"📂 Moved {xml_file} to {PROCESSED_FOLDER}")
+    destination = archive_xml(xml_file, PROCESSED_FOLDER)
+    print(Fore.MAGENTA + f"📂 Archived {xml_file} to {destination}")
+    return True
 
 
 def process_existing_files():
@@ -131,20 +148,22 @@ def monitor_folder():
     """
     Monitor a folder for new XML files and process them.
     """
-    processed_files = set(os.listdir(WATCH_FOLDER))
-
+    attempted = {}
     while True:
         time.sleep(CHECK_INTERVAL)
-        current_files = set(os.listdir(WATCH_FOLDER))
-        new_files = current_files - processed_files
-
-        for file in new_files:
-            if file.endswith(".xml"):
-                file_path = os.path.join(WATCH_FOLDER, file)
-                print(Fore.GREEN + f"📂 New XML detected: {file}")
-                process_suplovani(file_path)
-
-    processed_files = current_files
+        current = {}
+        for xml_path in Path(WATCH_FOLDER).glob("*.xml"):
+            paths = (xml_path, sidecar_path(xml_path), Path(config.config_path))
+            try:
+                signature = tuple((path.stat().st_mtime_ns, path.stat().st_size)
+                                  if path.exists() else None for path in paths)
+            except FileNotFoundError:
+                continue
+            current[xml_path] = signature
+            if attempted.get(xml_path) != signature:
+                print(Fore.GREEN + f"📂 New or updated XML detected: {xml_path.name}")
+                process_suplovani(xml_path)
+        attempted = current
 
 
 def build_parser():
@@ -160,6 +179,7 @@ def build_parser():
 if __name__ == "__main__":
     try:
         build_parser().parse_known_args()
+        os.makedirs(WATCH_FOLDER, exist_ok=True)
         print(Fore.MAGENTA + f"🔍 Monitoring folder: {WATCH_FOLDER}")
         process_existing_files()
         monitor_folder()

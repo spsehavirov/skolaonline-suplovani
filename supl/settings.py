@@ -4,6 +4,37 @@
 import os
 import time
 import yaml
+from copy import deepcopy
+
+
+def read_config(config_path="config.yaml"):
+    """Read a fresh config without masking malformed filter settings."""
+    if not os.path.exists(config_path):
+        return {"settings": {}}
+    with open(config_path, encoding="utf-8") as stream:
+        config = yaml.safe_load(stream) or {}
+    if not isinstance(config, dict) or not isinstance(config.get("settings", {}), dict):
+        raise ValueError("config.yaml and its settings field must be mappings")
+    config.setdefault("settings", {})
+    return config
+
+
+class SnapshotSettings:
+    """Keep a single job's settings stable across every export format."""
+
+    def __init__(self, settings, policy=None):
+        self._settings = deepcopy(settings)
+        if policy is not None:
+            self._settings["_filter_policy"] = policy
+
+    def get(self, key, default=None):
+        return deepcopy(self._settings.get(key, default))
+
+    def as_dict(self):
+        return deepcopy(self._settings)
+
+    def snapshot(self):
+        return self
 
 class Settings:
     """
@@ -44,4 +75,7 @@ class Settings:
     def get(self, key, default=None):
         """Fetches a value from the config file, auto-reloading if necessary."""
         self.load_config()
-        return self.config["settings"].get(key, default)
+        return self.config.get("settings", {}).get(key, default)
+
+    def snapshot(self):
+        return SnapshotSettings(read_config(self.config_path)["settings"])

@@ -1,5 +1,21 @@
 #!/bin/bash
 
-python3 -m venv .
-source bin/activate # needs to be run before script usage
-pip install -r requirements.txt
+set -euo pipefail
+cd -- "$(dirname -- "$0")"
+
+# The pinned dependencies target Python 3.13, regardless of the system default.
+if ! command -v python3.13 >/dev/null 2>&1; then
+    echo "Python 3.13 is required. Install it first (macOS: brew install python@3.13)." >&2
+    exit 1
+fi
+
+if [[ -e .venv/pyvenv.cfg ]]; then
+    if ! .venv/bin/python -c 'import sys; sys.exit(sys.version_info[:2] != (3, 13))'; then
+        echo "Existing .venv is not Python 3.13. Move it aside and rerun ./install." >&2
+        exit 1
+    fi
+fi
+
+python3.13 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+echo "Installation complete. Activate with: source .venv/bin/activate"

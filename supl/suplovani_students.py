@@ -288,19 +288,7 @@ class SuplovaniZaci(SuplovaniBase):
             resolution = super().get(record, "ZpusobReseni")
             note = super().get(record, "Poznamka")
 
-            write = True
-            if (
-                self.classes_to_include() is not None
-                and len(self.classes_to_include()) > 0
-            ):
-                write = class_name in self.classes_to_include()
-            elif (
-                self.classes_to_exclude() is not None
-                and len(self.classes_to_exclude()) > 0
-            ):
-                write = class_name not in self.classes_to_exclude()
-
-            if write:
+            if self.filter_policy.allows_class(class_name):
                 substitutions.append(
                     {
                         "Class": class_name,
@@ -485,9 +473,7 @@ class SuplovaniZaci(SuplovaniBase):
         """
         absences = self.extract_absences()
         raw_substitutions = self.extract_substitutions()
-        raw_substitutions = self.filter_records_by_end_period(
-            raw_substitutions, period_key="Period"
-        )
+        raw_substitutions = self.filter_student_records(raw_substitutions)
         substitutions = self.extract_final_substitutions2(raw_substitutions)
 
         self._cleanup(output_format)  # CLEANUP the previous versions
