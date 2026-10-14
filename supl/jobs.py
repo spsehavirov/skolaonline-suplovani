@@ -12,6 +12,7 @@ from .settings import SnapshotSettings, read_config
 
 
 def prepare_download(config_path, requested_date=None, args=None):
+    """Resolve the download date and saved/CLI policy without writing config."""
     config = read_config(config_path)
     report_date = parse_date(requested_date)
     policy = build_policy(config["settings"], report_date, args)
@@ -19,10 +20,12 @@ def prepare_download(config_path, requested_date=None, args=None):
 
 
 def sidecar_path(xml_path):
+    """Return the filter metadata filename belonging to an XML file."""
     return Path(str(xml_path) + ".filters.json")
 
 
 def xml_date(root):
+    """Require the report's own calendar date rather than trusting its filename."""
     text = root.findtext(".//Kalendar/Datum")
     if not text:
         raise ValueError("XML is missing Kalendar/Datum")
@@ -38,8 +41,13 @@ def settings_for_xml(xml_path, settings):
     if sidecar.exists():
         with sidecar.open(encoding="utf-8") as stream:
             data = json.load(stream)
-        if (not isinstance(data, dict) or set(data) != {"version", "date", "xml", "filters"}
-                or type(data["version"]) is not int or data["version"] != 1):
+        if (
+            not isinstance(data, dict)
+            or set(data) != {"version", "date", "xml", "filters"}
+            or not isinstance(data["version"], int)
+            or isinstance(data["version"], bool)
+            or data["version"] != 1
+        ):
             raise ValueError(f"Invalid filter snapshot: {sidecar}")
         if data["xml"] != xml_path.name or data["date"] != report_date.isoformat():
             raise ValueError(f"Filter snapshot does not match the XML name/date: {sidecar}")
@@ -53,15 +61,21 @@ def publish_xml(content, report_date, config, policy):
     """Make complete sidecar visible first, then complete XML; never overwrite."""
     actual_date = xml_date(ET.fromstring(content))
     if actual_date != report_date:
-        raise ValueError(f"Downloaded XML date {actual_date} does not match requested date {report_date}")
+        raise ValueError(
+            f"Downloaded XML date {actual_date} does not match requested date {report_date}"
+        )
     directory = Path(config["settings"].get("watch_folder", "./watch"))
     directory.mkdir(parents=True, exist_ok=True)
     destination = directory / f"so_suplovani_students-{report_date.isoformat()}.xml"
     sidecar = sidecar_path(destination)
     if destination.exists() or sidecar.exists():
         raise FileExistsError(f"A pending XML or filter snapshot already exists: {destination}")
-    data = {"version": 1, "date": report_date.isoformat(), "xml": destination.name,
-            "filters": policy.to_dict()}
+    data = {
+        "version": 1,
+        "date": report_date.isoformat(),
+        "xml": destination.name,
+        "filters": policy.to_dict(),
+    }
     sidecar_created = published = False
     with tempfile.TemporaryDirectory(prefix=".so-supl-", dir=directory) as temporary:
         staged_xml = Path(temporary) / "input"

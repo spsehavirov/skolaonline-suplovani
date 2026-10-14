@@ -49,6 +49,8 @@ Example config.yaml:
 """
 
 # pylint: disable=R0801
+# Bootstrap must precede third-party imports to select the installed environment.
+# pylint: disable=wrong-import-order
 
 from project_env import run_in_project_venv
 
@@ -95,7 +97,8 @@ def process_suplovani(xml_file):
     """Keep failed inputs available for correction and let other jobs continue."""
     try:
         return _process_suplovani(xml_file)
-    except Exception as exc:  # The monitor is the boundary for independent jobs.
+    # Each job is independent; even an unexpected renderer error must keep inputs.
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         print(Fore.RED + f"Processing failed for {xml_file}: {exc}")
         return False
 

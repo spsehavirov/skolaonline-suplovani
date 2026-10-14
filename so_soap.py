@@ -15,6 +15,8 @@ matches the Selenium variant: `so_suplovani_students-YYYY-MM-DD.xml`.
 """
 
 # pylint: disable=duplicate-code
+# Bootstrap must precede third-party imports to select the installed environment.
+# pylint: disable=wrong-import-order
 
 from __future__ import annotations
 
@@ -186,6 +188,7 @@ def _save_xml(content: bytes, date_obj: datetime, config: dict, policy=None) -> 
 
 
 def build_parser():
+    """Describe the shared download and per-report filter arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", help='Date to download (e.g. "25.02.2025").')
     add_filter_arguments(parser)

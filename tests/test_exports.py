@@ -1,5 +1,8 @@
 """Exercise dependency upgrades using synthetic data and temporary exports."""
 
+# Test names describe the cases; separate method docstrings would repeat them.
+# pylint: disable=missing-function-docstring
+
 import csv
 from pathlib import Path
 import tempfile
@@ -32,12 +35,21 @@ XML = """<NewDataSet>
 
 
 class ExportCompatibilityTests(unittest.TestCase):
+    """Verify actual CSV/PDF/PNG output using synthetic school schedules."""
+
     def test_student_hour_filters_preserve_absence_summary(self):
         root = ET.fromstring(XML)
         for tag, fields in (
             ("SuplovaniDruhAbsence", {"SUPL_DRUH_ABSENCE_ID": "a1", "Nazev": "nemoc"}),
-            ("AbsenceZdrojeVeDni", {"SUPL_DRUH_ABSENCE_ID": "a1", "UDALOST_ID": "absence1",
-                                  "Od": "2026-10-14T07:55:00", "Do": "2026-10-14T08:40:00"}),
+            (
+                "AbsenceZdrojeVeDni",
+                {
+                    "SUPL_DRUH_ABSENCE_ID": "a1",
+                    "UDALOST_ID": "absence1",
+                    "Od": "2026-10-14T07:55:00",
+                    "Do": "2026-10-14T08:40:00",
+                },
+            ),
             ("AbsenceUcitele", {"UDALOST_ID": "absence1", "OSOBA_ID": "t1"}),
         ):
             element = ET.SubElement(root, tag)
@@ -48,16 +60,34 @@ class ExportCompatibilityTests(unittest.TestCase):
             xml = directory / "schedule.xml"
             ET.ElementTree(root).write(xml, encoding="utf-8")
             config = directory / "config.yaml"
-            config.write_text('settings:\n  student_filters_by_date:\n    "2026-10-14":\n      hours: "3-6"\n      skip: ["1"]\n')
-            report = SuplovaniZaci(xml, Settings(config), str(Path(__file__).resolve().parents[1] / "templates"))
+            config.write_text(
+                'settings:\n  student_filters_by_date:\n    "2026-10-14":\n'
+                '      hours: "3-6"\n      skip: ["1"]\n',
+                encoding="utf-8",
+            )
+            report = SuplovaniZaci(
+                xml, Settings(config), str(Path(__file__).resolve().parents[1] / "templates")
+            )
             report.export_path(str(directory))
             self.assertEqual(report.filter_student_records(report.extract_substitutions()), [])
-            self.assertEqual(report.extract_absences(), [{"Teacher": "Jan Novák", "Reason": "nemoc",
-                                                         "From": "07:55", "To": "08:40", "Periods": "1"}])
+            self.assertEqual(
+                report.extract_absences(),
+                [
+                    {
+                        "Teacher": "Jan Novák",
+                        "Reason": "nemoc",
+                        "From": "07:55",
+                        "To": "08:40",
+                        "Periods": "1",
+                    }
+                ],
+            )
             report.generate("html")
-            self.assertIn("Jan Novák", next(directory.glob("*.html")).read_text())
+            self.assertIn("Jan Novák", next(directory.glob("*.html")).read_text(encoding="utf-8"))
 
     def test_filtered_csv_pdf_png_and_unchanged_teacher_report(self):
+        # Exercise the full export sequence and both report types in one fixture.
+        # pylint: disable=too-many-locals,too-many-statements
         root = ET.fromstring(XML)
         root.find("Trida/Nazev").text = "1A"
         root.find("VyucovaciHodinaOd/HodinaDo").text = "6"
@@ -66,7 +96,10 @@ class ExportCompatibilityTests(unittest.TestCase):
         root.find("VypisSuplovani/Poznamka").text = "TeacherMarker"
         for tag, fields in (
             ("Trida", {"SKUPINA_ID": "c2", "Nazev": "3A"}),
-            ("TridaSkupinaSeminar", {"SKUPINA_ID": "g2", "SKUPINA_ID_PARENT": "c2", "Nazev": "Skupina B"}),
+            (
+                "TridaSkupinaSeminar",
+                {"SKUPINA_ID": "g2", "SKUPINA_ID_PARENT": "c2", "Nazev": "Skupina B"},
+            ),
             ("UdalostStudijniSkupina", {"UDALOST_ID": "e2", "SKUPINA_ID": "g2"}),
         ):
             element = ET.SubElement(root, tag)
@@ -82,10 +115,14 @@ class ExportCompatibilityTests(unittest.TestCase):
             xml = directory / "schedule.xml"
             ET.ElementTree(root).write(xml, encoding="utf-8")
             config = directory / "config.yaml"
-            settings = {"settings": {"include": ["1A", "3A"], "exclude": ["3A"],
-                                     "student_filters_by_date": {
-                                         "2026-10-14": {"skip": ["1-3:2-4"]}}}}
-            config.write_text(yaml.safe_dump(settings))
+            settings = {
+                "settings": {
+                    "include": ["1A", "3A"],
+                    "exclude": ["3A"],
+                    "student_filters_by_date": {"2026-10-14": {"skip": ["1-3:2-4"]}},
+                }
+            }
+            config.write_text(yaml.safe_dump(settings), encoding="utf-8")
             templates = str(Path(__file__).resolve().parents[1] / "templates")
             students = SuplovaniZaci(xml, Settings(config), templates)
             students.export_path(str(directory))
@@ -97,7 +134,7 @@ class ExportCompatibilityTests(unittest.TestCase):
             self.assertTrue(all(row["Class"] == "1A" for row in rows))
 
             # Editing config between formats must not change this job's snapshot.
-            config.write_text("settings: {exclude: [1A, 3A]}\n")
+            config.write_text("settings: {exclude: [1A, 3A]}\n", encoding="utf-8")
             students.generate("html")
             students.generate("pdf")
             with pymupdf.open(next(directory.glob("*.pdf"))) as document:
@@ -111,7 +148,7 @@ class ExportCompatibilityTests(unittest.TestCase):
             self.assertTrue(all(png.read_bytes().startswith(b"\x89PNG\r\n\x1a\n") for png in pngs))
 
             # The same saved hours/skip policy must leave teacher periods intact.
-            config.write_text(yaml.safe_dump(settings))
+            config.write_text(yaml.safe_dump(settings), encoding="utf-8")
             teachers = SuplovaniUcitele(xml, Settings(config), templates)
             teachers.export_path(str(directory))
             teachers.generate("csv")
@@ -133,7 +170,9 @@ class ExportCompatibilityTests(unittest.TestCase):
                 xml.write_text(XML, encoding="utf-8")
                 config = directory / "config.yaml"
                 config.write_text("settings: {include: [], exclude: []}\n", encoding="utf-8")
-                report = exporter(xml, Settings(config), str(Path(__file__).resolve().parents[1] / "templates"))
+                report = exporter(
+                    xml, Settings(config), str(Path(__file__).resolve().parents[1] / "templates")
+                )
                 report.export_path(str(directory))
 
                 report.generate("csv")

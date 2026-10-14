@@ -116,7 +116,7 @@
 ## Known Gaps / Risks
 - Layout: Non-packaged script layout; relative imports; no standardized entry points.
 - Cancellation merge may suppress true cancellations when any other record exists for the class+period.
-- Synthetic unittest coverage of filter parsing/precedence, split ranges, date isolation, both downloader boundaries, publication/archive failures, monitor handoff and real CSV/PDF/PNG exports; no live download tests or CI/pre-commit in repo.
+- Synthetic unittest coverage of filter parsing/precedence, split ranges, date isolation, both downloader boundaries, publication/archive failures, monitor handoff and real CSV/PDF/PNG exports. GitHub Actions runs Pylint and these checks independently on Python 3.12 and 3.13; live download tests and pre-commit hooks are not provided.
 - Templates tightly coupled to Jinja2; logic lives in template (groupby, sorting) rather than code-side view models.
 
 ## Modernisation Hooks (pre-analysis)

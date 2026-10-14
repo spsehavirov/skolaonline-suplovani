@@ -27,7 +27,7 @@ from typing import Any, Dict, List
 
 from colorama import Fore, init
 from dotenv import find_dotenv, load_dotenv
-from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -48,7 +48,7 @@ DEFAULT_START_URL = (
 init(autoreset=True)
 
 
-def build_driver(headless: bool) -> webdriver.Chrome:
+def build_driver(headless: bool) -> WebDriver:
     """Create a Chrome driver with performance logging enabled."""
     options = Options()
     if headless:
@@ -58,13 +58,13 @@ def build_driver(headless: bool) -> webdriver.Chrome:
     options.add_argument("--disable-dev-shm-usage")
     options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
-    driver = webdriver.Chrome(options=options)
+    driver = WebDriver(options=options)
     # Enable CDP network events
     driver.execute_cdp_cmd("Network.enable", {})
     return driver
 
 
-def login(driver: webdriver.Chrome, username: str, password: str) -> None:
+def login(driver: WebDriver, username: str, password: str) -> None:
     """Log into SkolaOnline using the public login form."""
     driver.get(LOGIN_URL)
     driver.find_element(By.CSS_SELECTOR, "#JmenoUzivatele").send_keys(username)

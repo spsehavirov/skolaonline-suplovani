@@ -6,6 +6,7 @@ import sys
 
 
 def run_in_project_venv(script_file):
+    """Re-execute a direct entrypoint with its installed project interpreter."""
     environment = Path(script_file).resolve().parent / ".venv"
     if not environment.exists():
         # Preserve deployments that install dependencies in another environment.

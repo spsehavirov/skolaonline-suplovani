@@ -75,6 +75,10 @@ Kontrola kompatibility závislostí a exportů (syntetická data, bez přihláš
 $ python -m pip check
 $ python -m unittest discover -s tests -v
 ```
+GitHub Actions spouští Pylint a tyto testy samostatně na Pythonu 3.12 a 3.13.
+CI vytváří `.venv` pomocí interpreteru vybraného maticí; lokální `./install`
+nadále používá Python 3.13. Verze Pylintu pro CI je připnutá v `requirements-ci.txt`.
+
 Pro kontrolu známých zranitelností lze použít [pip-audit](https://github.com/pypa/pip-audit)
 z odděleného nástrojového prostředí proti balíčkům v `.venv/lib/python3.13/site-packages`.
 Podrobnosti aktualizace: [docs/dependency-security.md](docs/dependency-security.md).

@@ -40,6 +40,8 @@ Notes:
 """
 
 # pylint: disable=duplicate-code
+# Bootstrap must precede third-party imports to select the installed environment.
+# pylint: disable=wrong-import-order
 
 from project_env import run_in_project_venv
 
@@ -261,6 +263,7 @@ def runtime_job():
 
 
 def build_parser():
+    """Describe download/filter arguments while leaving pytest options intact."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--date", help="Provide date for the script to get", default=None
@@ -270,13 +273,16 @@ def build_parser():
 
 
 def main():
+    """Launch the browser downloader with an immutable per-run filter snapshot."""
     parser = build_parser()
 
     # Parse known args and leave the rest for SeleniumBase/pytest
     args, remaining_args = parser.parse_known_args()
 
     try:
-        config, report_date, policy = prepare_download(CONFIG, args.date or os.getenv("DATE_TO_PROCESS"), args)
+        config, report_date, policy = prepare_download(
+            CONFIG, args.date or os.getenv("DATE_TO_PROCESS"), args
+        )
     except (ValueError, OSError, yaml.YAMLError) as exc:
         parser.error(str(exc))
     context = {"date": report_date.isoformat(), "filters": policy.to_dict(),

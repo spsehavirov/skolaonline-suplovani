@@ -3,8 +3,9 @@
 """
 import os
 import time
-import yaml
 from copy import deepcopy
+
+import yaml
 
 
 def read_config(config_path="config.yaml"):
@@ -28,12 +29,15 @@ class SnapshotSettings:
             self._settings["_filter_policy"] = policy
 
     def get(self, key, default=None):
+        """Read a job setting without exposing mutable snapshot contents."""
         return deepcopy(self._settings.get(key, default))
 
     def as_dict(self):
+        """Return an independent copy suitable for building a filter policy."""
         return deepcopy(self._settings)
 
     def snapshot(self):
+        """An already frozen job snapshot needs no further configuration reads."""
         return self
 
 class Settings:
@@ -78,4 +82,5 @@ class Settings:
         return self.config.get("settings", {}).get(key, default)
 
     def snapshot(self):
+        """Read current settings once for the next independent report job."""
         return SnapshotSettings(read_config(self.config_path)["settings"])
