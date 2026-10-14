@@ -6,6 +6,14 @@ Oba stahovače podporují stejné filtry. Uložená pravidla v `config.yaml` tvo
 základ; parametry příkazu se k nim přidají pro konkrétní stažené XML.
 Příkaz **nemění `config.yaml` ani `.env`**.
 
+Před spuštěním aktivujte prostředí ve svém terminálu:
+
+```bash
+source .venv/bin/activate
+```
+
+Prefix `(.venv) $` označuje aktivované prostředí; zadávejte příkaz napravo od `$`.
+
 ## Přehled voleb
 
 | Parametr | Význam | Výpis |
@@ -31,8 +39,8 @@ včetně „odpadá“, suplování a změn učebny. Přehled absencí učitelů
 
 Pro ročníky 1–3 se tyto hodiny nezobrazí. Třída 3A je úplně vyloučená:
 
-```bash
-./so_soap.py --date "15.10.2026" --exclude=3A --skip=1-3:2-4
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026" --exclude=3A --skip=1-3:2-4
 ```
 
 Výběr `1-3` zahrnuje 1A–3C i případná další oddělení, například 2D.
@@ -40,41 +48,41 @@ Pokud má výjimka platit jen pro konkrétní třídy, vypište jejich názvy.
 
 ### Výpis pouze od 3. do 6. hodiny
 
-```bash
-./so_soap.py --date "15.10.2026" --hours=3-6
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026" --hours=3-6
 ```
 
 Pro 1A lze současně vynechat 4. hodinu:
 
-```bash
-./so_soap.py --date "15.10.2026" --hours=3-6 --skip=1A:4
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026" --hours=3-6 --skip=1A:4
 ```
 
 ### Různé výjimky pro jednotlivé třídy
 
 `--skip` lze opakovat:
 
-```bash
-./so_download.py --date "15.10.2026" --headless \
+```console
+(.venv) $ ./so_download.py --date "15.10.2026" --headless \
   --skip=1A:2-4 --skip=1B:1-2 --skip=1C:4
 ```
 
 Stejná pravidla lze zapsat i společně:
 
-```bash
-./so_soap.py --date "15.10.2026" --skip=1A:2-4,1B:1-2,1C:4
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026" --skip=1A:2-4,1B:1-2,1C:4
 ```
 
 Společná výjimka pro seznam tříd:
 
-```bash
-./so_soap.py --date "15.10.2026" --skip=1A,1B,1C:2-4
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026" --skip=1A,1B,1C:2-4
 ```
 
 ### Filtry pouze z příkazu
 
-```bash
-./so_soap.py --date "15.10.2026" --no-config --hours=3-6
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026" --no-config --hours=3-6
 ```
 
 ## Jak se pravidla skládají

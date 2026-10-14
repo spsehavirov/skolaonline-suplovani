@@ -68,15 +68,17 @@ Z kořene projektu spusťte:
 
 ```bash
 ./install
+source .venv/bin/activate
 ```
 
 Instalátor vytvoří `.venv` a nainstaluje závislosti z `requirements.txt`.
 `so_soap.py`, `so_download.py` a `suplovani.py` při přímém spuštění automaticky
-použijí toto prostředí. Pro jiné příkazy můžete prostředí aktivovat:
+použijí toto prostředí. Aktivace je přesto součástí doporučeného postupu pro práci
+v terminálu: zajistí stejné prostředí i pro další příkazy `python` a `pip`.
 
-```bash
-source .venv/bin/activate
-```
+Po aktivaci se v promptu obvykle objeví `(.venv)`. Prostředí aktivujte v každém
+novém terminálu. Ukázky s `(.venv) $` označují aktivované prostředí;
+do terminálu zadávejte příkaz napravo od `$`.
 
 Bez projektového `.venv` zůstane použitý interpreter aktuálního prostředí,
 například u staršího nasazení na Raspberry Pi.

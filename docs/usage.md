@@ -5,13 +5,22 @@
 Příkazy spouštějte z kořene projektu. Před prvním použitím dokončete
 [instalaci](installation.md).
 
+V každém novém terminálu aktivujte prostředí:
+
+```bash
+source .venv/bin/activate
+```
+
+Prefix `(.venv) $` v ukázkách označuje aktivované prostředí.
+Do terminálu zadávejte příkaz napravo od `$`.
+
 ## Stahování bez prohlížeče
 
 `so_soap.py` je přímý HTTP stahovač žákovského suplování. Přihlásí se do webové
 aplikace a odešle její exportní formulář; nepotřebuje Selenium ani otevřený prohlížeč.
 
-```bash
-./so_soap.py --date "15.10.2026"
+```console
+(.venv) $ ./so_soap.py --date "15.10.2026"
 ```
 
 Přijímá datum jako `15.10.2026`, `15.10.26` nebo `2026-10-15`.
@@ -27,8 +36,8 @@ a připojí soubor s filtry konkrétního běhu.
 Alternativní stahovač ovládá prohlížeč pomocí SeleniumBase. Dosavadní použití bylo
 s Chrome na macOS; přímý HTTP stahovač tuto závislost nemá.
 
-```bash
-./so_download.py --date "15.10.2026" --headless
+```console
+(.venv) $ ./so_download.py --date "15.10.2026" --headless
 ```
 
 Používá stejné přihlašovací údaje, filtry i cílový název XML jako `so_soap.py`.
@@ -38,8 +47,8 @@ Volby jako `--headless` předává SeleniumBase.
 
 Monitor spusťte v samostatném terminálu:
 
-```bash
-./suplovani.py
+```console
+(.venv) $ ./suplovani.py
 ```
 
 Při startu zpracuje již přítomná XML a potom sleduje nové nebo změněné soubory.
@@ -95,10 +104,10 @@ a formát. Ovlivnit podobu výpisu lze úpravou `templates/students.html` nebo
 
 ## Nápověda
 
-```bash
-./so_soap.py --help
-./so_download.py --help
-./suplovani.py --help
+```console
+(.venv) $ ./so_soap.py --help
+(.venv) $ ./so_download.py --help
+(.venv) $ ./suplovani.py --help
 ```
 
 Pravidla pro předávání filtrů a řešení vadného doprovodného souboru jsou v
